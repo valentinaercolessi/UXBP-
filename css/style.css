@@ -21,20 +21,20 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
-  width: 100%;
 }
 
 body {
   background: #e5e5e5;
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .app {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--natural-light);
   position: relative;
   overflow-x: hidden;
@@ -61,7 +61,7 @@ button {
 /* Topbar */
 
 .topbar {
-  padding: 20px 18px 8px;
+  padding: calc(20px + env(safe-area-inset-top)) 18px 8px;
 }
 
 .logo {
@@ -72,7 +72,7 @@ button {
 /* Content */
 
 .content {
-  padding: 0 16px 110px;
+  padding: 0 16px calc(110px + env(safe-area-inset-bottom));
 }
 
 /* Search bar */
@@ -102,7 +102,7 @@ button {
   border: none;
   outline: none;
   background: transparent;
-  font-size: 15px;
+  font-size: 16px;
   font-family: var(--font-display);
   color: var(--navy);
 }
@@ -264,7 +264,7 @@ button {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
   width: calc(100% - 32px);
   max-width: 448px;
   background: var(--white);
@@ -307,7 +307,7 @@ button {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: 90px;
+  bottom: calc(92px + env(safe-area-inset-bottom));
   transform: translateX(-50%) translateY(20px);
   background: var(--navy);
   color: var(--white);
@@ -337,7 +337,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 16px;
+  padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   z-index: 100;
   transition: background 0.25s ease;
 }
@@ -355,6 +355,7 @@ button {
   width: 100%;
   max-width: 380px;
   max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
   background: var(--natural-light);
   border-radius: 25px;
@@ -590,7 +591,7 @@ button {
   border: none;
   outline: none;
   background: transparent;
-  font-size: 12px;
+  font-size: 16px;
   font-family: var(--font-display);
   color: var(--navy);
 }
