@@ -52,6 +52,14 @@
       <span>Viaje más viable</span>
     </button>
 
+    <section class="section" id="search-results" hidden>
+      <div class="section-header-row">
+        <h2 class="section-title">Resultados de tu búsqueda <span id="search-results-count"></span></h2>
+        <button type="button" class="clear-results-btn" id="clear-results">Limpiar</button>
+      </div>
+      <div class="card-grid" id="search-results-grid"></div>
+    </section>
+
     <section class="section">
       <h2 class="section-title">Destinos para vos</h2>
       <div class="card-grid">
@@ -132,68 +140,110 @@
         <h2 id="modal-title">Viaje más viable</h2>
       </header>
 
-      <section class="modal-section">
-        <h3>Presupuesto disponible</h3>
-        <div class="budget-box">
-          <div class="budget-value" id="budget-value">$0</div>
-          <input type="range" id="budget-slider" class="budget-slider" min="0" max="3000000" step="50000" value="0">
-        </div>
-      </section>
-
-      <section class="modal-section">
-        <h3>Fechas disponibles</h3>
-        <div class="calendar-box">
-          <div class="calendar-header">
-            <button type="button" class="calendar-nav" id="cal-prev" aria-label="Mes anterior">
-              <img src="assets/icons/chevron-left.svg" alt="">
-            </button>
-            <span class="calendar-month" id="cal-month">Octubre</span>
-            <button type="button" class="calendar-nav" id="cal-next" aria-label="Mes siguiente">
-              <img src="assets/icons/chevron-right.svg" alt="">
-            </button>
+      <div class="accordion">
+        <section class="accordion-section open" id="section-presupuesto">
+          <button type="button" class="accordion-header" aria-expanded="true" aria-controls="body-presupuesto">
+            <span class="accordion-title">
+              <h3>Presupuesto disponible</h3>
+              <span class="accordion-summary" id="summary-presupuesto">Sin definir</span>
+            </span>
+            <svg class="accordion-chevron" viewBox="0 0 12 8" fill="none"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="accordion-body" id="body-presupuesto">
+            <div class="accordion-body-inner">
+              <div class="budget-box">
+                <div class="budget-value" id="budget-value">$0</div>
+                <input type="range" id="budget-slider" class="budget-slider" min="0" max="3000000" step="50000" value="0">
+              </div>
+            </div>
           </div>
-          <div class="calendar-weekdays">
-            <span>D</span><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span>
+        </section>
+
+        <section class="accordion-section" id="section-fechas">
+          <button type="button" class="accordion-header" aria-expanded="false" aria-controls="body-fechas">
+            <span class="accordion-title">
+              <h3>Fechas disponibles</h3>
+              <span class="accordion-summary" id="summary-fechas">Sin definir</span>
+            </span>
+            <svg class="accordion-chevron" viewBox="0 0 12 8" fill="none"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="accordion-body" id="body-fechas">
+            <div class="accordion-body-inner">
+              <div class="calendar-box">
+                <div class="calendar-header">
+                  <button type="button" class="calendar-nav" id="cal-prev" aria-label="Mes anterior">
+                    <img src="assets/icons/chevron-left.svg" alt="">
+                  </button>
+                  <span class="calendar-month" id="cal-month">Octubre</span>
+                  <button type="button" class="calendar-nav" id="cal-next" aria-label="Mes siguiente">
+                    <img src="assets/icons/chevron-right.svg" alt="">
+                  </button>
+                </div>
+                <div class="calendar-weekdays">
+                  <span>D</span><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span>
+                </div>
+                <div class="calendar-grid" id="cal-grid"></div>
+              </div>
+            </div>
           </div>
-          <div class="calendar-grid" id="cal-grid"></div>
-        </div>
-      </section>
+        </section>
 
-      <section class="modal-section">
-        <h3>Intereses</h3>
-        <div class="chips-scroll chips-grid" id="modal-chips">
-          <button class="chip" data-chip="montana">
-            <img src="assets/icons/terrain.svg" alt="" class="chip-icon">
-            <span>Montaña</span>
+        <section class="accordion-section" id="section-intereses">
+          <button type="button" class="accordion-header" aria-expanded="false" aria-controls="body-intereses">
+            <span class="accordion-title">
+              <h3>Intereses</h3>
+              <span class="accordion-summary" id="summary-intereses">Sin definir</span>
+            </span>
+            <svg class="accordion-chevron" viewBox="0 0 12 8" fill="none"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
-          <button class="chip" data-chip="historia">
-            <img src="assets/icons/menu_book_group1.svg" alt="" class="chip-icon">
-            <span>Historia</span>
-          </button>
-          <button class="chip" data-chip="arte">
-            <img src="assets/icons/palette.svg" alt="" class="chip-icon">
-            <span>Arte</span>
-          </button>
-          <button class="chip" data-chip="gastronomia">
-            <img src="assets/icons/restaurant.svg" alt="" class="chip-icon">
-            <span>Gastronomía</span>
-          </button>
-          <button class="chip chip-plus" id="modal-add-chip" aria-label="Agregar filtro">
-            <span>+</span>
-          </button>
-        </div>
-      </section>
+          <div class="accordion-body" id="body-intereses">
+            <div class="accordion-body-inner">
+              <div class="chips-scroll chips-grid" id="modal-chips">
+                <button class="chip" data-chip="montana">
+                  <img src="assets/icons/terrain.svg" alt="" class="chip-icon">
+                  <span>Montaña</span>
+                </button>
+                <button class="chip" data-chip="historia">
+                  <img src="assets/icons/menu_book_group1.svg" alt="" class="chip-icon">
+                  <span>Historia</span>
+                </button>
+                <button class="chip" data-chip="arte">
+                  <img src="assets/icons/palette.svg" alt="" class="chip-icon">
+                  <span>Arte</span>
+                </button>
+                <button class="chip" data-chip="gastronomia">
+                  <img src="assets/icons/restaurant.svg" alt="" class="chip-icon">
+                  <span>Gastronomía</span>
+                </button>
+                <button class="chip chip-plus" id="modal-add-chip" aria-label="Agregar filtro">
+                  <span>+</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <section class="modal-section">
-        <h3>¿Ya tenés algo en mente?</h3>
-        <div class="mente-field">
-          <button type="button" class="attach-btn" id="attach-btn" aria-label="Adjuntar archivo">
-            <img src="assets/icons/attachment.svg" alt="">
+        <section class="accordion-section" id="section-mente">
+          <button type="button" class="accordion-header" aria-expanded="false" aria-controls="body-mente">
+            <span class="accordion-title">
+              <h3>¿Ya tenés algo en mente?</h3>
+              <span class="accordion-summary" id="summary-mente">Sin definir</span>
+            </span>
+            <svg class="accordion-chevron" viewBox="0 0 12 8" fill="none"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
-          <input type="text" id="mente-input" placeholder="Un vuelo, hotel, lugar o actividad...">
-          <input type="file" id="attach-input" hidden>
-        </div>
-      </section>
+          <div class="accordion-body" id="body-mente">
+            <div class="accordion-body-inner">
+              <div class="mente-field">
+                <button type="button" class="attach-btn" id="attach-btn" aria-label="Adjuntar archivo">
+                  <img src="assets/icons/attachment.svg" alt="">
+                </button>
+                <input type="text" id="mente-input" placeholder="Un vuelo, hotel, lugar o actividad...">
+                <input type="file" id="attach-input" hidden>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <button class="cta-button modal-submit" id="buscar-viaje-btn">
         <span>Buscar viaje</span>
@@ -203,6 +253,8 @@
 
 </div>
 
+<script src="js/common.js"></script>
+<script src="js/data.js"></script>
 <script src="js/script.js"></script>
 </body>
 </html>

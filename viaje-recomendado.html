@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>exploramundo — Viaje Recomendado</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="reco-header">
+    <button type="button" class="back-btn" id="back-btn" aria-label="Volver">
+      <img src="assets/icons/back-arrow.svg" alt="">
+    </button>
+    <h1 class="reco-header-title">Viaje Recomendado</h1>
+  </header>
+
+  <main class="content reco-content">
+
+    <h2 class="reco-destination" id="reco-destination">—</h2>
+
+    <div class="reco-stats">
+      <div class="reco-stat">
+        <span class="reco-stat-label">COSTO TOTAL</span>
+        <span class="reco-stat-value" id="reco-costo">$0</span>
+      </div>
+      <div class="reco-stat">
+        <span class="reco-stat-label">DÍAS</span>
+        <span class="reco-stat-value" id="reco-dias">0</span>
+      </div>
+      <div class="reco-stat">
+        <span class="reco-stat-label">INTERESES</span>
+        <div class="reco-interest-icons" id="reco-intereses"></div>
+      </div>
+    </div>
+
+    <hr class="reco-divider">
+
+    <div class="carousel" id="carousel" aria-label="Fotos de la comunidad"></div>
+
+    <div class="reco-cards">
+      <div class="reco-card">
+        <div class="reco-card-header">
+          <img src="assets/icons/plane-group1.svg" class="reco-card-icon" alt="">
+          <span class="reco-card-label">VUELO</span>
+        </div>
+        <p class="reco-card-title" id="reco-vuelo-fecha">—</p>
+        <p class="reco-card-sub" id="reco-vuelo-aerolinea">—</p>
+        <div class="reco-card-detail">
+          <img src="assets/icons/icons-briefcase.svg" alt="">
+          <span>Equipaje de mano</span>
+        </div>
+      </div>
+      <div class="reco-card">
+        <div class="reco-card-header">
+          <img src="assets/icons/house-key.svg" class="reco-card-icon" alt="">
+          <span class="reco-card-label">ALOJAMIENTO</span>
+        </div>
+        <p class="reco-card-title" id="reco-aloj-nombre">—</p>
+        <p class="reco-card-sub" id="reco-aloj-habitacion">—</p>
+        <div class="reco-card-detail" id="reco-aloj-desayuno">
+          <img src="assets/icons/local-cafe.svg" alt="">
+          <span>Desayuno incluido</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reco-actions">
+      <button type="button" class="cta-button reco-btn-interesa" id="me-interesa-btn"><span>Me interesa</span></button>
+      <button type="button" class="cta-button reco-btn-otras" id="otras-opciones-btn"><span>Otras opciones</span></button>
+    </div>
+
+  </main>
+
+  <nav class="tabbar" aria-label="Navegación principal">
+    <a href="index.html" class="tab active" data-page="explorar">
+      <img src="assets/icons/tabbar-indicator.svg" alt="" class="tab-icon">
+      <span>Explorar</span>
+    </a>
+    <a href="#" class="tab" data-page="mis-viajes">
+      <img src="assets/icons/icon-map-active.svg" alt="" class="tab-icon">
+      <span>Mis viajes</span>
+    </a>
+    <a href="#" class="tab" data-page="reservar">
+      <img src="assets/icons/icon-tag.svg" alt="" class="tab-icon">
+      <span>Reservar</span>
+    </a>
+    <a href="#" class="tab" data-page="mi-perfil">
+      <img src="assets/icons/icon-user.svg" alt="" class="tab-icon">
+      <span>Mi perfil</span>
+    </a>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/data.js"></script>
+<script src="js/recomendado.js"></script>
+</body>
+</html>
