@@ -23,6 +23,25 @@ function formatDateLong(d) {
   return d.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
+// Transición progresiva entre pantallas: la página actual se desvanece antes de
+// navegar, y la que llega arranca en opacidad 0 y se desvanece hacia adentro (ver
+// abajo). Entre las dos, el cambio de pantalla se siente gradual, no instantáneo.
+const PAGE_FADE_MS = 260;
+
+function navigateWithFade(url, extraDelay = 0) {
+  const app = document.querySelector('.app');
+  if (app) app.classList.remove('page-visible');
+  setTimeout(() => { window.location.href = url; }, PAGE_FADE_MS + extraDelay);
+}
+
+(function fadeInOnLoad() {
+  const app = document.querySelector('.app');
+  if (!app) return;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => app.classList.add('page-visible'));
+  });
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   // Tabs sin pantalla todavía (todas menos "Explorar")
   document.querySelectorAll('.tab:not(.active)').forEach((tab) => {

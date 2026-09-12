@@ -281,6 +281,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Loader: se muestra mientras "buscamos" el viaje más viable
+  const searchLoader = document.getElementById('search-loader');
+  const SEARCH_DELAY = 3500;
+
+  // Guiones de la huella: se arman una sola vez, sincronizados con la vuelta
+  // del avión (misma duración de 3.2s) para que cada uno se encienda justo
+  // cuando el avión pasa por su posición y enseguida se apague.
+  const loaderTicks = document.getElementById('loader-ticks');
+  const TICK_COUNT = 16;
+  const ORBIT_CYCLE = 3.2;
+  for (let i = 0; i < TICK_COUNT; i++) {
+    const arm = document.createElement('div');
+    arm.className = 'loader-tick-arm';
+    arm.style.transform = `rotate(${(360 / TICK_COUNT) * i}deg)`;
+    const tick = document.createElement('span');
+    tick.className = 'loader-tick';
+    tick.style.animationDelay = `${(ORBIT_CYCLE / TICK_COUNT) * i}s`;
+    arm.appendChild(tick);
+    loaderTicks.appendChild(arm);
+  }
+
+  function showLoader() {
+    searchLoader.hidden = false;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => searchLoader.classList.add('show'));
+    });
+  }
+
+  function hideLoader() {
+    searchLoader.classList.remove('show');
+    setTimeout(() => { searchLoader.hidden = true; }, 500);
+  }
+
   // Buscar viaje: filtra los datos mockeados y te lleva a la pantalla de Viaje Recomendado
   document.getElementById('buscar-viaje-btn').addEventListener('click', () => {
     const presupuesto = Number(budgetSlider.value);
@@ -295,24 +328,31 @@ document.addEventListener('DOMContentLoaded', () => {
       texto,
     });
 
-    if (!resultados.length) {
-      closeModal();
-      showToast('No encontramos resultados para esa búsqueda');
-      return;
-    }
+    closeModal();
+    showLoader();
+    document.body.style.overflow = 'hidden';
 
-    const elegido = elegirMasViable(resultados, { presupuesto, intereses });
+    setTimeout(() => {
+      if (!resultados.length) {
+        hideLoader();
+        document.body.style.overflow = '';
+        showToast('No encontramos resultados para esa búsqueda');
+        return;
+      }
 
-    sessionStorage.setItem('viajeBusqueda', JSON.stringify({
-      tripId: elegido.id,
-      presupuesto,
-      inicio: rangeStart.toISOString(),
-      fin: (rangeEnd || rangeStart).toISOString(),
-      intereses,
-      texto,
-      otros: resultados.map((t) => t.id),
-    }));
+      const elegido = elegirMasViable(resultados, { presupuesto, intereses });
 
-    window.location.href = 'viaje-recomendado.html';
+      sessionStorage.setItem('viajeBusqueda', JSON.stringify({
+        tripId: elegido.id,
+        presupuesto,
+        inicio: rangeStart.toISOString(),
+        fin: (rangeEnd || rangeStart).toISOString(),
+        intereses,
+        texto,
+        otros: resultados.map((t) => t.id),
+      }));
+
+      navigateWithFade('viaje-recomendado.html');
+    }, SEARCH_DELAY);
   });
 });

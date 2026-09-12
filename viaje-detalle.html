@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>exploramundo — Detalle del viaje</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <div class="detalle-sticky">
+    <header class="reco-header">
+      <button type="button" class="back-btn" id="back-btn" aria-label="Volver">
+        <img src="assets/icons/back-arrow.svg" alt="">
+      </button>
+      <h1 class="reco-header-title">Viaje Recomendado</h1>
+    </header>
+
+    <div class="detalle-sticky-body">
+      <h2 class="reco-destination" id="detalle-destination">—</h2>
+
+      <p class="price-label">Anticipá el precio final</p>
+
+      <div class="price-card">
+        <div class="price-row">
+          <span class="price-current" id="price-current">$0</span>
+          <span class="price-max" id="price-max">$0</span>
+        </div>
+        <div class="price-track">
+          <div class="price-fill" id="price-fill"></div>
+        </div>
+      </div>
+
+      <hr class="reco-divider">
+    </div>
+  </div>
+
+  <main class="content reco-content detalle-content">
+
+    <h3 class="section-subtitle">Lo esencial</h3>
+
+    <div class="esencial-card">
+      <button type="button" class="esencial-refresh" id="refresh-vuelo" aria-label="Cambiar opción de vuelo">
+        <img src="assets/icons/refresh.svg" alt="">
+      </button>
+
+      <div class="esencial-row" id="row-ida">
+        <div class="esencial-label">
+          <img src="assets/icons/plane-group1.svg" class="esencial-icon" alt="">
+          <span>VUELO DE IDA</span>
+        </div>
+        <p class="esencial-title" id="ida-fecha">—</p>
+        <p class="esencial-sub" id="ida-aerolinea">—</p>
+        <p class="esencial-detail" id="ida-ruta">—</p>
+        <button type="button" class="price-pill price-pill-fixed selected" id="ida-precio">$0</button>
+      </div>
+
+      <hr class="esencial-sep">
+
+      <div class="esencial-row" id="row-vuelta">
+        <div class="esencial-label">
+          <img src="assets/icons/plane-group1.svg" class="esencial-icon esencial-icon-flip" alt="">
+          <span>VUELO DE VUELTA</span>
+        </div>
+        <p class="esencial-title" id="vuelta-fecha">—</p>
+        <p class="esencial-sub" id="vuelta-aerolinea">—</p>
+        <p class="esencial-detail" id="vuelta-ruta">—</p>
+        <button type="button" class="price-pill price-pill-fixed selected" id="vuelta-precio">$0</button>
+      </div>
+    </div>
+
+    <div class="esencial-card">
+      <button type="button" class="esencial-refresh" id="refresh-hotel" aria-label="Cambiar alojamiento">
+        <img src="assets/icons/refresh.svg" alt="">
+      </button>
+
+      <div class="esencial-row" id="row-hotel">
+        <div class="esencial-label">
+          <img src="assets/icons/house-key.svg" class="esencial-icon" alt="">
+          <span>ALOJAMIENTO</span>
+        </div>
+        <p class="esencial-title" id="hotel-nombre">—</p>
+        <p class="esencial-sub" id="hotel-habitacion">—</p>
+        <p class="esencial-detail" id="hotel-distancia">—</p>
+        <button type="button" class="price-pill price-pill-fixed selected" id="hotel-precio">$0</button>
+      </div>
+
+      <div class="esencial-photo">
+        <img id="hotel-photo-img" src="" alt="">
+      </div>
+    </div>
+
+    <h3 class="section-subtitle">Lo más compartido</h3>
+
+    <div class="shared-card">
+      <div class="shared-header">
+        <span>ACTIVIDADES</span>
+      </div>
+      <div class="shared-scroll" id="actividades-scroll"></div>
+    </div>
+
+    <div class="shared-card">
+      <div class="shared-header">
+        <span>GASTRONOMÍA</span>
+      </div>
+      <div class="shared-scroll" id="gastronomia-scroll"></div>
+    </div>
+
+  </main>
+
+  <button type="button" class="cta-button detalle-guardar" id="guardar-viaje-btn">
+    <span>Guardar Viaje</span>
+  </button>
+
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/data.js"></script>
+<script src="js/detalle.js"></script>
+</body>
+</html>

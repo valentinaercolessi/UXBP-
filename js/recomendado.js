@@ -195,15 +195,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------- Botones ----------
 
   document.getElementById('back-btn').addEventListener('click', () => {
-    window.location.href = 'index.html';
+    navigateWithFade('index.html');
   });
 
   document.getElementById('me-interesa-btn').addEventListener('click', () => {
-    showToast(`¡Genial! Guardamos tu interés en ${trip.nombre}. Te vamos a contactar para coordinar los detalles.`);
+    navigateWithFade('viaje-detalle.html');
   });
 
   document.getElementById('otras-opciones-btn').addEventListener('click', () => {
     sessionStorage.setItem('pendingResults', JSON.stringify(data.otros || []));
-    window.location.href = 'index.html';
+    navigateWithFade('index.html');
   });
 });

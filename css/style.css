@@ -37,8 +37,13 @@ body {
   min-height: 100dvh;
   background: var(--natural-light);
   position: relative;
-  overflow-x: hidden;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transition: opacity 0.26s ease;
+}
+
+.app.page-visible {
+  opacity: 1;
 }
 
 img {
@@ -55,6 +60,7 @@ button {
   font-family: inherit;
   background: none;
   border: none;
+  padding: 0;
   cursor: pointer;
 }
 
@@ -990,4 +996,414 @@ button {
 
 .reco-btn-otras {
   background: var(--grey-inactive);
+}
+
+/* Loader: buscando el viaje más viable */
+
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(249, 248, 245, 0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.loader-overlay[hidden] {
+  display: none;
+}
+
+.loader-overlay.show {
+  opacity: 1;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 0 40px;
+  text-align: center;
+  transform: scale(0.92);
+  transition: transform 0.5s ease;
+}
+
+.loader-overlay.show .loader-content {
+  transform: scale(1);
+}
+
+/* El avión recorre el perímetro de un círculo: el pivote gira y arrastra al
+   avión con él, así el ícono va rotando suavemente siguiendo la curva del
+   trayecto (como si estuviera realmente volando en círculo). Los guiones de
+   la huella son marcas fijas que se encienden justo cuando el avión pasa por
+   su posición y enseguida se apagan (no un círculo punteado siempre visible). */
+
+.loader-orbit-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+}
+
+.loader-ticks {
+  position: absolute;
+  inset: 0;
+}
+
+.loader-tick-arm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+.loader-tick {
+  position: absolute;
+  top: -23px;
+  left: -1px;
+  width: 2px;
+  height: 7px;
+  border-radius: 1px;
+  background: var(--blue);
+  opacity: 0;
+  transform: rotate(90deg);
+  animation: loader-tick-fade 3.2s ease-out infinite;
+}
+
+@keyframes loader-tick-fade {
+  0% { opacity: 0.85; }
+  22% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.loader-orbit {
+  position: absolute;
+  inset: 0;
+  animation: loader-orbit-spin 3.2s linear infinite;
+}
+
+.loader-orbit-pos {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  margin-left: -13px;
+}
+
+.loader-plane {
+  width: 100%;
+  height: 100%;
+  color: var(--blue);
+  transform: rotate(90deg);
+}
+
+@keyframes loader-orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loader-text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--grey-03);
+}
+
+/* ===== Pantalla: Detalle del viaje ("Me interesa") ===== */
+
+/* Encabezado fijo: header, destino, barra de precio y el divisor no scrollean;
+   solo "Lo esencial" y "Lo más compartido" se mueven debajo. */
+.detalle-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--natural-light);
+}
+
+.detalle-sticky-body {
+  padding: 0 16px;
+}
+
+.detalle-content {
+  padding-top: 14px;
+  padding-bottom: calc(90px + env(safe-area-inset-bottom));
+}
+
+.price-label {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--grey-03);
+}
+
+.price-card {
+  background: var(--white);
+  border-radius: 10px;
+  box-shadow: var(--shadow-light);
+  padding: 16px 18px 20px;
+  margin-bottom: 20px;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.price-current {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--blue);
+}
+
+.price-max {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--grey-01);
+}
+
+.price-track {
+  position: relative;
+  height: 8px;
+  border-radius: 10px;
+  background: #bfbfbf;
+}
+
+.price-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  border-radius: 10px;
+  background: var(--blue);
+  transition: width 0.4s ease;
+}
+
+.section-subtitle {
+  margin: 4px 0 12px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--grey-03);
+}
+
+/* Vuelo / Alojamiento */
+
+.esencial-card {
+  position: relative;
+  background: var(--white);
+  border-radius: 14px;
+  box-shadow: var(--shadow-light);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.esencial-refresh {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+}
+
+.esencial-refresh img {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+
+.esencial-refresh.spinning img {
+  transform: rotate(360deg);
+}
+
+.esencial-row {
+  position: relative;
+  padding-right: 90px;
+}
+
+.esencial-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.esencial-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.esencial-icon-flip {
+  transform: rotate(180deg) scaleY(-1);
+}
+
+.esencial-label span {
+  font-family: var(--font-rounded);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: var(--grey-02);
+}
+
+.esencial-title {
+  margin: 0 0 3px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 14px;
+  color: #272727;
+}
+
+.esencial-sub {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: #272727;
+}
+
+.esencial-detail {
+  margin: 0;
+  font-family: var(--font-rounded);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: var(--grey-02);
+}
+
+.esencial-sep {
+  border: none;
+  border-top: 1px solid var(--natural-light);
+  margin: 14px 0;
+}
+
+.price-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+  padding: 0 12px;
+  border: 0.8px solid var(--blue);
+  border-radius: 26px;
+  background: var(--white);
+  color: var(--blue);
+  font-family: var(--font-rounded);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.price-pill-fixed {
+  position: absolute;
+  top: 30px;
+  right: 0;
+}
+
+.price-pill.selected {
+  background: rgba(47, 59, 78, 0.15);
+  color: var(--blue);
+  font-weight: 600;
+}
+
+/* Foto del alojamiento */
+
+.esencial-photo {
+  margin-top: 14px;
+  height: 140px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--grey-01);
+}
+
+.esencial-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Lo más compartido */
+
+.shared-card {
+  background: var(--white);
+  border-radius: 14px;
+  box-shadow: var(--shadow-light);
+  padding: 16px 0 18px;
+  margin-bottom: 14px;
+}
+
+.shared-header {
+  padding: 0 18px;
+  margin-bottom: 12px;
+}
+
+.shared-header span {
+  font-family: var(--font-rounded);
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  color: var(--grey-02);
+}
+
+.shared-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 0 18px;
+  scrollbar-width: none;
+}
+
+.shared-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.shared-item {
+  flex: 0 0 auto;
+  width: 140px;
+}
+
+.shared-item-image {
+  position: relative;
+  width: 100%;
+  height: 90px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--grey-01);
+  margin-bottom: 8px;
+}
+
+.shared-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shared-item-name {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 13px;
+  color: #272727;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shared-item .price-pill {
+  width: 100%;
+}
+
+.detalle-guardar {
+  position: fixed;
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 368px;
+  z-index: 50;
+  margin-bottom: 0;
 }

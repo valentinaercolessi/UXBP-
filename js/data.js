@@ -12,8 +12,10 @@ const TRIPS = [
     fin: '2025-10-31',
     fotoCategoria: 'montana',
     fotoSeed: 0,
+    aeropuertoOrigen: 'AEP',
+    aeropuertoDestino: 'MDZ',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
-    alojamiento: { nombre: 'Zonda Hotel & Spa', habitacion: 'Habitación Superior', desayuno: true },
+    alojamiento: { nombre: 'Zonda Hotel & Spa', habitacion: 'Habitación Superior', desayuno: true, capacidad: '2 personas', distancia: '2.1km del centro' },
   },
   {
     id: 2,
@@ -27,8 +29,10 @@ const TRIPS = [
     fin: '2025-10-31',
     fotoCategoria: 'playa',
     fotoSeed: 0,
+    aeropuertoOrigen: 'EZE',
+    aeropuertoDestino: 'PTY',
     vuelo: { aerolinea: 'Copa Airlines' },
-    alojamiento: { nombre: 'Trump Ocean Club', habitacion: 'Habitación Vista al Mar', desayuno: true },
+    alojamiento: { nombre: 'Trump Ocean Club', habitacion: 'Habitación Vista al Mar', desayuno: true, capacidad: '2 personas', distancia: '350m de la playa' },
   },
   {
     id: 3,
@@ -42,8 +46,10 @@ const TRIPS = [
     fin: '2025-10-31',
     fotoCategoria: 'playa',
     fotoSeed: 1,
+    aeropuertoOrigen: 'EZE',
+    aeropuertoDestino: 'FLN',
     vuelo: { aerolinea: 'GOL Linhas Aéreas' },
-    alojamiento: { nombre: 'Costão do Santinho', habitacion: 'Habitación Standard', desayuno: true },
+    alojamiento: { nombre: 'Costão do Santinho', habitacion: 'Habitación Standard', desayuno: true, capacidad: '2 personas', distancia: '120m de la playa' },
   },
   {
     id: 4,
@@ -57,8 +63,10 @@ const TRIPS = [
     fin: '2025-10-31',
     fotoCategoria: 'ciudad',
     fotoSeed: 0,
+    aeropuertoOrigen: 'EZE',
+    aeropuertoDestino: 'FLN',
     vuelo: { aerolinea: 'LATAM' },
-    alojamiento: { nombre: 'Novotel', habitacion: 'Habitación Deluxe', desayuno: false },
+    alojamiento: { nombre: 'Novotel', habitacion: 'Habitación Deluxe', desayuno: false, capacidad: '2 personas', distancia: '600m del centro' },
   },
   {
     id: 5,
@@ -72,8 +80,10 @@ const TRIPS = [
     fin: '2025-10-24',
     fotoCategoria: 'montana',
     fotoSeed: 1,
+    aeropuertoOrigen: 'AEP',
+    aeropuertoDestino: 'BRC',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
-    alojamiento: { nombre: 'Luma Boutique Hotel', habitacion: 'Habitación Deluxe', desayuno: true },
+    alojamiento: { nombre: 'Luma Boutique Hotel', habitacion: 'Habitación Deluxe', desayuno: true, capacidad: '2 personas', distancia: '490m del centro' },
   },
   {
     id: 6,
@@ -87,8 +97,10 @@ const TRIPS = [
     fin: '2025-10-20',
     fotoCategoria: 'montana',
     fotoSeed: 2,
+    aeropuertoOrigen: 'EZE',
+    aeropuertoDestino: 'CUZ',
     vuelo: { aerolinea: 'LATAM' },
-    alojamiento: { nombre: 'Casa Andina Premium', habitacion: 'Habitación Ejecutiva', desayuno: true },
+    alojamiento: { nombre: 'Casa Andina Premium', habitacion: 'Habitación Ejecutiva', desayuno: true, capacidad: '2 personas', distancia: '800m de la plaza principal' },
   },
   {
     id: 7,
@@ -102,8 +114,10 @@ const TRIPS = [
     fin: '2025-10-28',
     fotoCategoria: 'ciudad',
     fotoSeed: 1,
+    aeropuertoOrigen: 'EZE',
+    aeropuertoDestino: 'FCO',
     vuelo: { aerolinea: 'ITA Airways' },
-    alojamiento: { nombre: 'Hotel Artemide', habitacion: 'Habitación Classic', desayuno: false },
+    alojamiento: { nombre: 'Hotel Artemide', habitacion: 'Habitación Classic', desayuno: false, capacidad: '2 personas', distancia: '1.5km del Coliseo' },
   },
   {
     id: 8,
@@ -117,8 +131,10 @@ const TRIPS = [
     fin: '2025-10-15',
     fotoCategoria: 'playa',
     fotoSeed: 2,
+    aeropuertoOrigen: 'EZE',
+    aeropuertoDestino: 'FLN',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
-    alojamiento: { nombre: 'Hotel Costa Azul', habitacion: 'Habitación Doble', desayuno: true },
+    alojamiento: { nombre: 'Hotel Costa Azul', habitacion: 'Habitación Doble', desayuno: true, capacidad: '2 personas', distancia: '90m de la playa' },
   },
   {
     id: 9,
@@ -132,8 +148,10 @@ const TRIPS = [
     fin: '2025-10-31',
     fotoCategoria: 'ciudad',
     fotoSeed: 2,
+    aeropuertoOrigen: 'AEP',
+    aeropuertoDestino: 'AEP',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
-    alojamiento: { nombre: 'San Telmo Boutique', habitacion: 'Habitación Loft', desayuno: false },
+    alojamiento: { nombre: 'San Telmo Boutique', habitacion: 'Habitación Loft', desayuno: false, capacidad: '2 personas', distancia: '300m de Plaza Dorrego' },
   },
   {
     id: 10,
@@ -147,8 +165,10 @@ const TRIPS = [
     fin: '2025-10-18',
     fotoCategoria: 'montana',
     fotoSeed: 3,
+    aeropuertoOrigen: 'AEP',
+    aeropuertoDestino: 'SLA',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
-    alojamiento: { nombre: 'Legado Mítico Salta', habitacion: 'Habitación Patio', desayuno: true },
+    alojamiento: { nombre: 'Legado Mítico Salta', habitacion: 'Habitación Patio', desayuno: true, capacidad: '2 personas', distancia: '1km del centro histórico' },
   },
 ];
 
@@ -253,4 +273,90 @@ function elegirMasViable(trips, { presupuesto, intereses }) {
 
     return a.precio - b.precio;
   })[0];
+}
+
+// ---------- Pantalla de detalle ("Me interesa") ----------
+
+// Alternativas de vuelo para el botón de refrescar: la primera (mult 1) reconstruye
+// exactamente el precio original del viaje recomendado (el mínimo).
+const FLIGHT_ALT_POOL = [
+  { aerolinea: null, horaIda: '22:10', horaVuelta: '18:00', mult: 1 },
+  { aerolinea: 'LATAM', horaIda: '07:45', horaVuelta: '20:30', mult: 0.93 },
+  { aerolinea: 'JetSMART', horaIda: '14:20', horaVuelta: '09:15', mult: 1.08 },
+];
+
+// Alternativas de alojamiento para el botón de refrescar (mismo criterio: la primera
+// reconstruye el hotel y precio originales). Cada una trae su propia foto real del
+// hotel (exterior/interior), para que la imagen cambie junto con la opción elegida.
+const HOTEL_ALT_POOL = [
+  { nombre: null, habitacion: null, distancia: null, mult: 1, imagen: 'assets/images/feed/hotel-original.jpg' },
+  { nombre: 'Aires del Sur Hotel', habitacion: 'Habitación Superior', distancia: '750m del centro', mult: 0.91, imagen: 'assets/images/feed/hotel-alt1-exterior.jpg' },
+  { nombre: 'Costanera Suites', habitacion: 'Habitación Ejecutiva', distancia: '1.1km del centro', mult: 1.09, imagen: 'assets/images/feed/hotel-alt2-cabin.jpg' },
+];
+
+// Actividades: una por categoría de destino (montaña/playa/ciudad), con una foto que
+// coincide exactamente con el texto Y con el tipo de destino (alguien haciendo trekking
+// en la montaña, alguien en bici en la costa, alguien caminando por el centro). Más
+// "Mirador panorámico", que siempre usa el paisaje propio de cada destino.
+const ACTIVITIES_BY_CATEGORIA = {
+  montana: [
+    { nombre: 'Trekking guiado', precio: 28000, imagen: 'assets/images/feed/mountain-hiker.jpg' },
+  ],
+  playa: [
+    { nombre: 'Paseo en bicicleta', precio: 15000, imagen: 'assets/images/feed/beach-bikewaterfront.jpg' },
+    { nombre: 'Caminata por la costa', precio: 12000, imagen: 'assets/images/feed/beach-coastrock.jpg' },
+  ],
+  ciudad: [
+    { nombre: 'Recorrido en bicicleta', precio: 15000, imagen: 'assets/images/feed/activity-ciclismo.jpg' },
+    { nombre: 'Paseo a pie por el centro', precio: 8000, imagen: 'assets/images/feed/city-streetaerial.jpg' },
+  ],
+};
+
+// Gastronomía: algunas son universales (café, medialunas, postre — se comen en
+// cualquier destino), y una es propia de cada categoría para que se sienta local
+// (asado en la montaña, mercado costero en la playa, comida casera en la ciudad).
+const GASTRONOMIA_UNIVERSAL = [
+  { nombre: 'Café de especialidad', precio: 8000, imagen: 'assets/images/feed/food-cafe.jpg' },
+  { nombre: 'Medialunas y café', precio: 6000, imagen: 'assets/images/feed/food-medialunas.jpg' },
+  { nombre: 'Postre casero', precio: 9000, imagen: 'assets/images/feed/food-postre.jpg' },
+];
+
+const GASTRONOMIA_BY_CATEGORIA = {
+  montana: [
+    { nombre: 'Asado a la parrilla', precio: 26000, imagen: 'assets/images/feed/food-asado.jpg' },
+  ],
+  playa: [
+    { nombre: 'Mercado costero', precio: 15000, imagen: 'assets/images/feed/food-degustacion.jpg' },
+  ],
+  ciudad: [
+    { nombre: 'Almuerzo casero', precio: 13000, imagen: 'assets/images/feed/food-almuerzo.jpg' },
+  ],
+};
+
+function redondearCien(n) {
+  return Math.round(n / 100) * 100;
+}
+
+// Divide el costo total del viaje (el mínimo sugerido) en vuelo (ida/vuelta) y
+// alojamiento, aplicando los multiplicadores de las alternativas elegidas por el
+// usuario al refrescar. Con los multiplicadores en 1 (las opciones originales),
+// la suma reconstruye exactamente el costo total de la pantalla anterior.
+function splitCosts(costoBase, flightMult, hotelMult) {
+  const flightTotal = redondearCien(costoBase * 0.3 * flightMult);
+  const hotelTotal = redondearCien(costoBase * 0.7 * hotelMult);
+  const idaPrecio = redondearCien(flightTotal * 0.55);
+  const vueltaPrecio = flightTotal - idaPrecio;
+  return { flightTotal, hotelTotal, idaPrecio, vueltaPrecio, total: flightTotal + hotelTotal };
+}
+
+function getActividadesForTrip(trip) {
+  const fotos = PHOTO_POOLS[trip.fotoCategoria] || PHOTO_POOLS.ciudad;
+  const propias = ACTIVITIES_BY_CATEGORIA[trip.fotoCategoria] || ACTIVITIES_BY_CATEGORIA.ciudad;
+  const mirador = { nombre: 'Mirador panorámico', precio: 5000, imagen: fotos[trip.fotoSeed % fotos.length] };
+  return [...propias, mirador].map((act, i) => ({ ...act, id: `act-${i}` }));
+}
+
+function getGastronomiaForTrip(trip) {
+  const propia = GASTRONOMIA_BY_CATEGORIA[trip.fotoCategoria] || GASTRONOMIA_BY_CATEGORIA.ciudad;
+  return [...propia, ...GASTRONOMIA_UNIVERSAL].map((item, i) => ({ ...item, id: `gas-${i}` }));
 }
