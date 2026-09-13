@@ -12,6 +12,7 @@ const TRIPS = [
     fin: '2025-10-31',
     fotoCategoria: 'montana',
     fotoSeed: 0,
+    fotoVideo: 'assets/images/feed/mendoza-video.mp4',
     aeropuertoOrigen: 'AEP',
     aeropuertoDestino: 'MDZ',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
@@ -29,6 +30,7 @@ const TRIPS = [
     fin: '2025-10-31',
     fotoCategoria: 'playa',
     fotoSeed: 0,
+    fotoVideo: 'assets/images/feed/panama-video.mp4',
     aeropuertoOrigen: 'EZE',
     aeropuertoDestino: 'PTY',
     vuelo: { aerolinea: 'Copa Airlines' },
@@ -46,6 +48,7 @@ const TRIPS = [
     fin: '2025-10-31',
     fotoCategoria: 'playa',
     fotoSeed: 1,
+    fotoVideo: 'assets/images/feed/brasil-video.mp4',
     aeropuertoOrigen: 'EZE',
     aeropuertoDestino: 'FLN',
     vuelo: { aerolinea: 'GOL Linhas Aéreas' },
@@ -63,6 +66,7 @@ const TRIPS = [
     fin: '2025-10-31',
     fotoCategoria: 'ciudad',
     fotoSeed: 0,
+    fotoVideo: 'assets/images/feed/brasil-video.mp4',
     aeropuertoOrigen: 'EZE',
     aeropuertoDestino: 'FLN',
     vuelo: { aerolinea: 'LATAM' },
@@ -80,6 +84,7 @@ const TRIPS = [
     fin: '2025-10-24',
     fotoCategoria: 'montana',
     fotoSeed: 1,
+    fotoVideo: 'assets/images/feed/bariloche-video.mp4',
     aeropuertoOrigen: 'AEP',
     aeropuertoDestino: 'BRC',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
@@ -97,6 +102,7 @@ const TRIPS = [
     fin: '2025-10-20',
     fotoCategoria: 'montana',
     fotoSeed: 2,
+    fotoVideo: 'assets/images/feed/cusco-video.mp4',
     aeropuertoOrigen: 'EZE',
     aeropuertoDestino: 'CUZ',
     vuelo: { aerolinea: 'LATAM' },
@@ -114,6 +120,7 @@ const TRIPS = [
     fin: '2025-10-28',
     fotoCategoria: 'ciudad',
     fotoSeed: 1,
+    fotoVideo: 'assets/images/feed/roma-video.mp4',
     aeropuertoOrigen: 'EZE',
     aeropuertoDestino: 'FCO',
     vuelo: { aerolinea: 'ITA Airways' },
@@ -125,12 +132,13 @@ const TRIPS = [
     categoria: 'Alojamiento',
     precio: 65000,
     porNoche: true,
-    imagen: 'assets/images/costao-do-santinho.png',
+    imagen: 'assets/images/feed/beach-bluebay.jpg',
     intereses: ['gastronomia'],
     inicio: '2025-10-01',
     fin: '2025-10-15',
     fotoCategoria: 'playa',
     fotoSeed: 2,
+    fotoVideo: 'assets/images/feed/brasil-video.mp4',
     aeropuertoOrigen: 'EZE',
     aeropuertoDestino: 'FLN',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
@@ -221,16 +229,32 @@ const CAPTION_POOL = [
 // Arma las 5 fotos del carrusel para un viaje, todas de su categoría temática (montaña/playa/
 // ciudad) para que se vean coherentes con el destino. Cada viaje tiene su propio fotoSeed
 // (a mano, sin colisiones) para que destinos de la misma categoría no repitan el mismo orden.
+// Si el viaje tiene un fotoVideo propio, se intercala como un post más de la comunidad
+// (no reemplaza ninguna foto, se suma al feed).
 function getFeedForTrip(trip) {
   const pool = PHOTO_POOLS[trip.fotoCategoria] || PHOTO_POOLS.ciudad;
   const cantidad = Math.min(5, pool.length);
   const seed = (trip.fotoSeed || 0) * 2;
   const fotos = Array.from({ length: cantidad }, (_, i) => pool[(seed + i) % pool.length]);
 
-  return fotos.map((src, i) => ({
+  const feed = fotos.map((src, i) => ({
+    tipo: 'foto',
     src,
     ...CAPTION_POOL[(seed * 3 + i) % CAPTION_POOL.length],
   }));
+
+  if (trip.fotoVideo) {
+    // El usuario que "sube" el video se elige por el id del viaje (no por fotoSeed,
+    // que se repite entre categorías) para que no sea siempre la misma persona.
+    const posicionIntercalada = Math.min(2, feed.length);
+    feed.splice(posicionIntercalada, 0, {
+      tipo: 'video',
+      src: trip.fotoVideo,
+      ...CAPTION_POOL[trip.id % CAPTION_POOL.length],
+    });
+  }
+
+  return feed;
 }
 
 // Parsea "YYYY-MM-DD" como fecha local (evita corrimientos de huso horario
@@ -412,7 +436,12 @@ function splitCosts(costoBase, flightMult, hotelMult) {
 function getActividadesForTrip(trip) {
   const fotos = PHOTO_POOLS[trip.fotoCategoria] || PHOTO_POOLS.ciudad;
   const propias = ACTIVITIES_BY_CATEGORIA[trip.fotoCategoria] || ACTIVITIES_BY_CATEGORIA.ciudad;
-  const mirador = { nombre: 'Mirador panorámico', precio: 5000, imagen: fotos[trip.fotoSeed % fotos.length] };
+  // El mirador nunca puede repetir una foto ya usada por otra actividad de la
+  // misma categoría (antes pasaba con algunos fotoSeed, ej. Cusco y Panamá).
+  const usadas = new Set(propias.map((act) => act.imagen));
+  const disponibles = fotos.filter((src) => !usadas.has(src));
+  const poolMirador = disponibles.length ? disponibles : fotos;
+  const mirador = { nombre: 'Mirador panorámico', precio: 5000, imagen: poolMirador[trip.fotoSeed % poolMirador.length] };
   return [...propias, mirador].map((act, i) => ({ ...act, id: `act-${i}` }));
 }
 

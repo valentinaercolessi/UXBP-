@@ -49,9 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reco-aloj-desayuno').hidden = true;
   }
 
-  // ---------- Carrusel de fotos: pila de cartas en abanico ----------
-  // Solo se ven la foto del frente y su vecina de cada lado (como un mazo de cartas
-  // apiladas y giradas); el resto queda completamente oculto hasta que le toca el turno.
+  // ---------- Carrusel de fotos: pila apilada por profundidad ----------
+  // Como en el diseño: la foto del frente al centro, grande y nítida; dos vecinas
+  // a cada lado asomando de a poco, sin ninguna inclinación (nada de rotate);
+  // solo se van achicando y oscureciendo cuanto más lejos del frente están.
   // Arrastrando, la pila "pasa" cartas: la de al lado se acerca y crece, la del frente
   // se va desplazando y encogiendo hacia atrás.
 
@@ -64,8 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const slides = feed.map((photo) => {
     const slide = document.createElement('div');
     slide.className = 'carousel-slide';
+    const esVideo = photo.tipo === 'video';
+    const media = esVideo
+      ? `<video src="${photo.src}" autoplay muted loop playsinline></video>
+         <span class="carousel-video-badge">
+           <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+         </span>`
+      : `<img src="${photo.src}" alt="Foto de ${photo.user} en ${trip.nombre}">`;
     slide.innerHTML = `
-      <img src="${photo.src}" alt="Foto de ${photo.user} en ${trip.nombre}">
+      ${media}
       <div class="carousel-overlay"></div>
       <div class="carousel-user">
         <span class="carousel-avatar">${photo.inicial}</span>
@@ -79,10 +87,25 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const count = slides.length;
-  const STEP_X = 56; // px que se desplaza cada carta vecina
-  const STEP_ANGLE = 13; // grados que se inclina cada carta vecina
-  const VISIBLE_RANGE = 1; // solo se ven el frente + 1 vecina de cada lado
+  const VISIBLE_RANGE = 2; // frente + 2 vecinas de cada lado, como en el diseño
+  const STEP_X_NEAR = 91.5; // desplazamiento de la vecina inmediata (offset 1)
+  const STEP_X_FAR = 162; // desplazamiento de la vecina lejana (offset 2)
+  const SCALE_NEAR = 0.81; // achique de la vecina inmediata
+  const SCALE_FAR = 0.69; // achique de la vecina lejana
   let position = 0; // índice "de frente" (puede ser fraccional mientras se arrastra)
+
+  function scaleForOffset(absOffset) {
+    const a = Math.min(absOffset, VISIBLE_RANGE);
+    if (a <= 1) return 1 - a * (1 - SCALE_NEAR);
+    return SCALE_NEAR - (a - 1) * (SCALE_NEAR - SCALE_FAR);
+  }
+
+  function translateXForOffset(offset) {
+    const sign = offset < 0 ? -1 : 1;
+    const a = Math.min(Math.abs(offset), VISIBLE_RANGE);
+    const dx = a <= 1 ? a * STEP_X_NEAR : STEP_X_NEAR + (a - 1) * (STEP_X_FAR - STEP_X_NEAR);
+    return sign * dx;
+  }
 
   // Distancia circular con signo más corta entre la carta i y la posición actual
   function circularOffset(i) {
@@ -105,10 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const offset = circularOffset(i);
       const absOffset = Math.abs(offset);
       const visible = absOffset <= VISIBLE_RANGE + 0.001;
-      const translateX = offset * STEP_X;
-      const rotateDeg = offset * STEP_ANGLE;
-      const scale = 1 - Math.min(absOffset, VISIBLE_RANGE) * 0.14;
-      slide.style.transform = `translateX(${translateX}px) rotate(${rotateDeg}deg) scale(${scale})`;
+      const translateX = translateXForOffset(offset);
+      const scale = scaleForOffset(absOffset);
+      slide.style.transform = `translateX(${translateX}px) scale(${scale})`;
       slide.style.opacity = visible ? String(1 - absOffset * 0.3) : '0';
       slide.style.filter = `brightness(${1 - Math.min(absOffset, VISIBLE_RANGE) * 0.35})`;
       slide.style.zIndex = String(Math.round((1 - absOffset) * 100));
