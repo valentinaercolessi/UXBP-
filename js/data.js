@@ -299,6 +299,27 @@ function buscarOtrasOpciones({ presupuesto, inicio, fin, intereses, texto }) {
   });
 }
 
+// Por qué una opción de "Otras opciones" no es 100% viable: cuánto se pasa del
+// presupuesto o cuántos días la separan de las fechas pedidas (lo que aplique).
+// Se muestra en esa pantalla y, si el viaje se termina guardando, también en
+// Mis Viajes.
+function formatDiferenciaOtras(trip, costoTotal, presupuesto, inicio, fin) {
+  if (presupuesto > 0 && costoTotal > presupuesto) {
+    return `${formatCurrency(costoTotal - presupuesto)} más que tu presupuesto`;
+  }
+  const tripInicio = parseLocalDate(trip.inicio);
+  const tripFin = parseLocalDate(trip.fin);
+  if (fin < tripInicio) {
+    const diffDias = Math.round((tripInicio - fin) / 86400000);
+    return `Disponible ${diffDias} día${diffDias === 1 ? '' : 's'} después de tus fechas`;
+  }
+  if (inicio > tripFin) {
+    const diffDias = Math.round((inicio - tripFin) / 86400000);
+    return `Disponible ${diffDias} día${diffDias === 1 ? '' : 's'} antes de tus fechas`;
+  }
+  return '';
+}
+
 // Elige el viaje "más viable" dentro de los resultados: prioriza más intereses en común
 // y, a igualdad, el precio más cercano al presupuesto disponible (mejor aprovechamiento).
 // Sin presupuesto definido, "viable" se interpreta como más económico.

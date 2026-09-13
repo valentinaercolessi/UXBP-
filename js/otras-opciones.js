@@ -26,31 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const body = document.getElementById('oo-body');
 
   if (!trips.length) {
-    body.innerHTML = '<p class="oo-empty">No encontramos otras opciones para esta búsqueda.</p>';
-  }
-
-  // Por qué esta opción no es 100% viable: cuánto se pasa del presupuesto o
-  // cuántos días la separan de las fechas pedidas (lo que aplique).
-  function formatDiferencia(trip, costoTotal) {
-    if (data.presupuesto > 0 && costoTotal > data.presupuesto) {
-      return `${formatCurrency(costoTotal - data.presupuesto)} más que tu presupuesto`;
-    }
-    const tripInicio = parseLocalDate(trip.inicio);
-    const tripFin = parseLocalDate(trip.fin);
-    if (fin < tripInicio) {
-      const diffDias = Math.round((tripInicio - fin) / 86400000);
-      return `Disponible ${diffDias} día${diffDias === 1 ? '' : 's'} después de tus fechas`;
-    }
-    if (inicio > tripFin) {
-      const diffDias = Math.round((inicio - tripFin) / 86400000);
-      return `Disponible ${diffDias} día${diffDias === 1 ? '' : 's'} antes de tus fechas`;
-    }
-    return '';
+    body.innerHTML = `
+      <p class="oo-empty">No encontramos otras opciones para esta búsqueda.</p>
+      <button type="button" class="oo-btn-editar" id="oo-btn-editar">Editar datos ingresados</button>
+    `;
+    document.getElementById('oo-btn-editar').addEventListener('click', () => {
+      sessionStorage.setItem('reabrirViajeModal', '1');
+      navigateWithFade('index.html');
+    });
   }
 
   trips.forEach((trip) => {
     const costoTotal = trip.porNoche ? trip.precio * dias : trip.precio;
-    const diferencia = formatDiferencia(trip, costoTotal);
+    const diferencia = formatDiferenciaOtras(trip, costoTotal, data.presupuesto, inicio, fin);
 
     const card = document.createElement('article');
     card.className = 'oo-card';
@@ -74,12 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     card.querySelector('.oo-btn-interesa').addEventListener('click', () => {
-      sessionStorage.setItem('viajeBusqueda', JSON.stringify({
-        ...data,
-        tripId: trip.id,
-        origen: 'otras',
-      }));
-      navigateWithFade('viaje-recomendado.html');
+      // No tocamos 'viajeBusqueda': así, al volver, esta pantalla sigue
+      // mostrando exactamente la misma búsqueda y lista de antes.
+      sessionStorage.setItem('otrasOpcionesTripId', String(trip.id));
+      navigateWithFade('viaje-detalle.html');
     });
 
     body.appendChild(card);

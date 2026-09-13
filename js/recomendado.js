@@ -190,6 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('me-interesa-btn').addEventListener('click', () => {
+    // Por si quedó una selección de "Otras opciones" sin consumir, para que
+    // este flujo normal siempre muestre el viaje de 'viajeBusqueda'.
+    sessionStorage.removeItem('otrasOpcionesTripId');
     navigateWithFade('viaje-detalle.html');
   });
 

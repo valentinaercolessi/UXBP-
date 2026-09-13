@@ -13,7 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const trip = TRIPS.find((t) => t.id === data.tripId);
+  // Si se entró desde "Otras opciones", el viaje puntual viaja aparte (acá) en
+  // vez de sobreescribir 'viajeBusqueda' — así esa búsqueda queda intacta y,
+  // al volver, la lista de otras opciones sigue mostrando lo mismo de antes.
+  const otrasOpcionesTripId = sessionStorage.getItem('otrasOpcionesTripId');
+  if (otrasOpcionesTripId) sessionStorage.removeItem('otrasOpcionesTripId');
+  const origen = otrasOpcionesTripId ? 'otras' : (data.origen === 'otras' ? 'otras' : 'viable');
+
+  const trip = TRIPS.find((t) => t.id === (otrasOpcionesTripId ? Number(otrasOpcionesTripId) : data.tripId));
   if (!trip) {
     window.location.href = 'index.html';
     return;
@@ -169,7 +176,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------- Botones de navegación ----------
 
   document.getElementById('back-btn').addEventListener('click', () => {
-    navigateWithFade('viaje-recomendado.html');
+    // Si se llegó acá directo desde "Otras opciones" (sin pasar por Viaje
+    // Recomendado), volver ahí en vez de abrir un Viaje Recomendado que
+    // nunca se visitó.
+    navigateWithFade(origen === 'otras' ? 'otras-opciones.html' : 'viaje-recomendado.html');
   });
 
   // ---------- Overlay: viaje guardado ----------
@@ -225,12 +235,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.getElementById('guardar-viaje-btn').addEventListener('click', () => {
+    // 'otras' si este viaje se abrió desde la pantalla "Otras opciones";
+    // 'viable' si vino directo del viaje recomendado (el caso por defecto).
+    const categoria = origen;
     addSavedTrip({
       id: `${trip.id}-${Date.now()}`,
       tripId: trip.id,
-      // 'otras' si este viaje se abrió desde la pantalla "Otras opciones";
-      // 'viable' si vino directo del viaje recomendado (el caso por defecto).
-      categoria: data.origen === 'otras' ? 'otras' : 'viable',
+      categoria,
+      // Por qué no era 100% viable (solo aplica a "otras"), para mostrarlo
+      // también en la card de Mis Viajes.
+      diferencia: categoria === 'otras' ? formatDiferenciaOtras(trip, currentTotal, data.presupuesto, inicio, fin) : '',
       nombre: trip.nombre,
       imagen: trip.imagen,
       inicio: inicio.toISOString(),

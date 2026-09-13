@@ -68,6 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && !modal.hidden) closeModal();
   });
 
+  // Si venimos de "Editar datos ingresados" en Otras opciones, reabrimos este overlay
+  if (sessionStorage.getItem('reabrirViajeModal')) {
+    sessionStorage.removeItem('reabrirViajeModal');
+    openModal();
+  }
+
   // ---------- Acordeón de secciones ----------
 
   const accordionSections = Array.from(document.querySelectorAll('.accordion-section'));
@@ -99,6 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const budgetValue = document.getElementById('budget-value');
   const summaryPresupuesto = document.getElementById('summary-presupuesto');
 
+  const PRESUPUESTO_MINIMO_RECOMENDADO = 300000;
+
   function updateBudgetUI() {
     const min = Number(budgetSlider.min);
     const max = Number(budgetSlider.max);
@@ -107,13 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
     budgetSlider.style.background =
       `linear-gradient(to right, var(--grey-inactive) 0%, var(--grey-inactive) ${percent}%, var(--natural-light) ${percent}%, var(--natural-light) 100%)`;
     budgetValue.textContent = val === 0 ? '$0' : formatCurrency(val);
-    summaryPresupuesto.textContent = val === 0 ? 'Sin definir' : formatCurrency(val);
+    summaryPresupuesto.textContent = val > PRESUPUESTO_MINIMO_RECOMENDADO ? 'Mínimo recomendado' : '';
   }
 
   budgetSlider.addEventListener('input', updateBudgetUI);
-  budgetSlider.addEventListener('change', () => {
-    if (isSectionOpen('section-presupuesto')) setOpenSection('section-fechas');
-  });
   updateBudgetUI();
 
   // Calendario de fechas disponibles
@@ -125,8 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const summaryFechas = document.getElementById('summary-fechas');
 
   let viewDate = new Date(2025, 9, 1); // Octubre 2025, como en el diseño
-  let rangeStart = new Date(2025, 9, 14);
-  let rangeEnd = new Date(2025, 9, 18);
+  let rangeStart = null;
+  let rangeEnd = null;
 
   function isInRange(date) {
     if (!rangeStart) return false;
@@ -200,14 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateFechasSummary();
 
   // Intereses (dentro del modal)
-  const summaryIntereses = document.getElementById('summary-intereses');
-
-  function updateInteresesSummary() {
-    const activos = Array.from(document.querySelectorAll('#modal-chips .chip.active span')).map((s) => s.textContent);
-    summaryIntereses.textContent = activos.length ? activos.join(', ') : 'Sin definir';
-  }
-
-  setupChipGroup(document.getElementById('modal-chips'), document.getElementById('modal-add-chip'), updateInteresesSummary);
+  setupChipGroup(document.getElementById('modal-chips'), document.getElementById('modal-add-chip'));
 
   // Adjuntar archivo / "¿Ya tenés algo en mente?"
   const attachBtn = document.getElementById('attach-btn');
@@ -270,11 +268,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const presupuesto = Number(budgetSlider.value);
     const intereses = Array.from(document.querySelectorAll('#modal-chips .chip.active')).map((c) => c.dataset.chip);
     const texto = menteInput.value.trim();
+    // El calendario arranca sin selección; si no se eligió nada, buscamos
+    // igual con un rango por defecto en vez de bloquear la búsqueda.
+    const busquedaInicio = rangeStart || new Date(2025, 9, 14);
+    const busquedaFin = rangeEnd || rangeStart || new Date(2025, 9, 18);
 
     const resultados = buscarViajes({
       presupuesto,
-      inicio: rangeStart,
-      fin: rangeEnd,
+      inicio: busquedaInicio,
+      fin: busquedaFin,
       intereses,
       texto,
     });
@@ -294,8 +296,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const elegido = elegirMasViable(resultados, { presupuesto, intereses });
       const otrasOpciones = buscarOtrasOpciones({
         presupuesto,
-        inicio: rangeStart,
-        fin: rangeEnd,
+        inicio: busquedaInicio,
+        fin: busquedaFin,
         intereses,
         texto,
       });
@@ -303,8 +305,8 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('viajeBusqueda', JSON.stringify({
         tripId: elegido.id,
         presupuesto,
-        inicio: rangeStart.toISOString(),
-        fin: (rangeEnd || rangeStart).toISOString(),
+        inicio: busquedaInicio.toISOString(),
+        fin: busquedaFin.toISOString(),
         intereses,
         texto,
         otros: otrasOpciones.map((t) => t.id),

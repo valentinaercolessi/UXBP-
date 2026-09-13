@@ -32,6 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function buildCard(record, esElMasReciente) {
+    // Siempre se reserva el mismo espacio para esta línea (viable u otras),
+    // para que todas las cards midan igual y sean el mismo componente.
+    const diferenciaTexto = record.categoria === 'otras' && record.diferencia ? record.diferencia : '&nbsp;';
+
     const entry = document.createElement('div');
     entry.className = 'mv-entry';
     entry.innerHTML = `
@@ -45,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3 class="mv-card-title">${record.nombre}</h3>
             <p class="mv-card-dates">${formatDateRange(new Date(record.inicio), new Date(record.fin))}</p>
             <p class="mv-card-sub">${formatSubtitulo(record, esElMasReciente)}</p>
+            <p class="mv-card-diff">${diferenciaTexto}</p>
             <div class="mv-card-stats">
               <div class="mv-stat">
                 <span class="mv-stat-label">COSTO TOTAL</span>
@@ -59,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       </article>
-      <button type="button" class="cta-button mv-reservar-btn">Reservar</button>
+      <button type="button" class="mv-reservar-btn">Reservar</button>
     `;
     entry.querySelector('.mv-reservar-btn').addEventListener('click', () => {
       showToast('La reserva va a estar disponible próximamente');
@@ -70,37 +75,27 @@ document.addEventListener('DOMContentLoaded', () => {
     return entry;
   }
 
-  function renderGroup(records, listId, countId, idDelMasReciente) {
-    const list = document.getElementById(listId);
-    const count = document.getElementById(countId);
-    list.innerHTML = '';
-    count.textContent = records.length ? `(${records.length})` : '';
-    records
-      .slice()
-      .sort((a, b) => new Date(b.guardadoEn) - new Date(a.guardadoEn))
-      .forEach((record) => list.appendChild(buildCard(record, record.id === idDelMasReciente)));
-  }
-
   function renderGuardados() {
     const guardados = getSavedTrips();
-    const viables = guardados.filter((r) => r.categoria !== 'otras');
-    const otras = guardados.filter((r) => r.categoria === 'otras');
 
-    // Solo el viaje guardado más reciente de todos (sea cual sea su categoría)
-    // dice "última búsqueda"; el resto muestra la fecha en que se guardó.
+    // Solo el viaje guardado más reciente dice "última búsqueda"; el resto
+    // muestra la fecha en que se guardó. Los viajes de "Otras opciones" se
+    // distinguen únicamente por su texto de diferencia (en azul en la card),
+    // no por una sección aparte.
     const masReciente = guardados.reduce(
       (a, b) => (!a || new Date(b.guardadoEn) > new Date(a.guardadoEn) ? b : a),
       null
     );
     const idDelMasReciente = masReciente ? masReciente.id : null;
 
-    document.getElementById('mv-section-viables').hidden = viables.length === 0;
-    document.getElementById('mv-section-otras').hidden = otras.length === 0;
-    document.getElementById('mv-divider').hidden = viables.length === 0 || otras.length === 0;
     document.getElementById('mv-empty-guardados').hidden = guardados.length > 0;
 
-    renderGroup(viables, 'mv-list-viables', 'mv-count-viables', idDelMasReciente);
-    renderGroup(otras, 'mv-list-otras', 'mv-count-otras', idDelMasReciente);
+    const list = document.getElementById('mv-list-guardados');
+    list.innerHTML = '';
+    guardados
+      .slice()
+      .sort((a, b) => new Date(b.guardadoEn) - new Date(a.guardadoEn))
+      .forEach((record) => list.appendChild(buildCard(record, record.id === idDelMasReciente)));
   }
 
   // ---------- Confirmación para eliminar un viaje guardado ----------
