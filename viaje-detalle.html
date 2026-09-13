@@ -115,6 +115,20 @@
 
   <div class="toast" id="toast"></div>
 
+  <div class="saved-overlay" id="saved-overlay" hidden>
+    <div class="saved-card" role="dialog" aria-modal="true" aria-labelledby="saved-title">
+      <div class="saved-check">
+        <svg viewBox="0 0 55 55" width="55" height="55" aria-hidden="true">
+          <circle cx="27.5" cy="27.5" r="27.5" fill="#002fa6"/>
+          <path id="saved-check-path" d="M15.5 28.5L23 36.5L39.5 18.5" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <p class="saved-title" id="saved-title">Tu viaje fue guardado</p>
+      <button type="button" class="saved-btn saved-btn-primary" id="saved-ver-viaje">Ver viaje</button>
+      <button type="button" class="saved-btn saved-btn-secondary" id="saved-volver-inicio">Volver al inicio</button>
+    </div>
+  </div>
+
 </div>
 
 <script src="js/common.js"></script>

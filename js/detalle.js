@@ -26,8 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('detalle-destination').textContent = trip.nombre;
 
-  const MONTH_NAMES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-
   function formatFechaHora(date, hora) {
     return `${date.getDate()} ${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()} · ${hora}hs`;
   }
@@ -36,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let flightAltIndex = 0;
   let hotelAltIndex = 0;
+  let currentTotal = 0;
   const selectedExtras = new Map(); // id -> precio
 
   // Vuelo y alojamiento vienen seleccionados por defecto (son "lo esencial"),
@@ -99,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const vueltaTotal = vueltaBtn.classList.contains('selected') ? split.vueltaPrecio : 0;
     const hotelTotal = hotelBtn.classList.contains('selected') ? split.hotelTotal : 0;
 
-    const currentTotal = idaTotal + vueltaTotal + hotelTotal + extrasTotal;
+    currentTotal = idaTotal + vueltaTotal + hotelTotal + extrasTotal;
     const percent = Math.min(100, (currentTotal / maxTotal) * 100);
 
     document.getElementById('price-current').textContent = formatCurrency(currentTotal);
@@ -173,8 +172,84 @@ document.addEventListener('DOMContentLoaded', () => {
     navigateWithFade('viaje-recomendado.html');
   });
 
+  // ---------- Overlay: viaje guardado ----------
+
+  const savedOverlay = document.getElementById('saved-overlay');
+  const savedCheck = savedOverlay.querySelector('.saved-check');
+  const savedCheckPath = document.getElementById('saved-check-path');
+  const savedTitle = document.getElementById('saved-title');
+  const savedButtons = [
+    document.getElementById('saved-ver-viaje'),
+    document.getElementById('saved-volver-inicio'),
+  ];
+
+  function resetSavedCheck() {
+    const length = savedCheckPath.getTotalLength();
+    savedCheckPath.style.transition = 'none';
+    savedCheckPath.style.strokeDasharray = length;
+    savedCheckPath.style.strokeDashoffset = length;
+  }
+
+  function drawSavedCheck() {
+    savedCheckPath.getBoundingClientRect();
+    savedCheckPath.style.transition = 'stroke-dashoffset 1s ease-out';
+    savedCheckPath.style.strokeDashoffset = '0';
+  }
+
+  function openSavedOverlay() {
+    resetSavedCheck();
+    [savedCheck, savedTitle, ...savedButtons].forEach((el) => el.classList.remove('show'));
+
+    savedOverlay.hidden = false;
+    savedOverlay.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      savedOverlay.classList.add('open');
+    });
+
+    // Secuencia: 1) sube el fondo/tarjeta, 2) el tilde arranca a dibujarse
+    // a la vez que aparece el texto, 3) por último aparecen los botones.
+    setTimeout(() => {
+      savedCheck.classList.add('show');
+      savedTitle.classList.add('show');
+      drawSavedCheck();
+    }, 550);
+
+    setTimeout(() => {
+      savedButtons.forEach((btn) => btn.classList.add('show'));
+    }, 1550);
+  }
+
+  function closeSavedOverlay() {
+    savedOverlay.classList.remove('open');
+    setTimeout(() => { savedOverlay.hidden = true; }, 320);
+  }
+
   document.getElementById('guardar-viaje-btn').addEventListener('click', () => {
-    showToast(`¡Viaje a ${trip.nombre} guardado! Te vamos a contactar para coordinar los detalles.`);
-    setTimeout(() => navigateWithFade('index.html'), 1800);
+    addSavedTrip({
+      id: `${trip.id}-${Date.now()}`,
+      tripId: trip.id,
+      categoria: 'viable', // llegó acá tocando "Me interesa" en Viaje Recomendado
+      nombre: trip.nombre,
+      imagen: trip.imagen,
+      inicio: inicio.toISOString(),
+      fin: fin.toISOString(),
+      dias,
+      costoTotal: currentTotal,
+      intereses: resolverInteresesConIcono(data.intereses, trip.intereses),
+      guardadoEn: new Date().toISOString(),
+    });
+    openSavedOverlay();
+  });
+
+  savedOverlay.addEventListener('click', (e) => {
+    if (e.target === savedOverlay) closeSavedOverlay();
+  });
+
+  document.getElementById('saved-ver-viaje').addEventListener('click', () => {
+    navigateWithFade('mis-viajes.html');
+  });
+
+  document.getElementById('saved-volver-inicio').addEventListener('click', () => {
+    navigateWithFade('index.html');
   });
 });

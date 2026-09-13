@@ -30,16 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Intereses: mostramos los que el usuario eligió en la búsqueda (o, si no marcó
   // ninguno con ícono conocido, los del propio viaje) para reflejar lo que pidió.
-  const INTEREST_ICONS = {
-    montana: 'assets/icons/terrain.svg',
-    gastronomia: 'assets/icons/restaurant.svg',
-    historia: 'assets/icons/menu_book_group1.svg',
-    arte: 'assets/icons/palette.svg',
-  };
-  const elegidosConIcono = (data.intereses || []).filter((i) => INTEREST_ICONS[i]);
-  const interesesAMostrar = elegidosConIcono.length
-    ? elegidosConIcono
-    : trip.intereses.filter((i) => INTEREST_ICONS[i]);
+  const interesesAMostrar = resolverInteresesConIcono(data.intereses, trip.intereses);
 
   const interesesEl = document.getElementById('reco-intereses');
   interesesAMostrar.forEach((interes) => {
