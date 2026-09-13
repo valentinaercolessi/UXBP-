@@ -194,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('otras-opciones-btn').addEventListener('click', () => {
-    sessionStorage.setItem('pendingResults', JSON.stringify(data.otros || []));
-    navigateWithFade('index.html');
+    navigateWithFade('otras-opciones.html');
   });
 });

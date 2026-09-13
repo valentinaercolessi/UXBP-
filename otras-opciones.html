@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>exploramundo — Otras opciones</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <div class="oo-page">
+    <header class="reco-header">
+      <button type="button" class="back-btn" id="back-btn" aria-label="Volver">
+        <img src="assets/icons/back-arrow.svg" alt="">
+      </button>
+      <h1 class="reco-header-title">Otras opciones</h1>
+    </header>
+
+    <p class="oo-description">Los destinos más cercanos al Viaje Recomendado, con flexibilidad en presupuesto y fechas disponibles.</p>
+
+    <div class="oo-body" id="oo-body"></div>
+  </div>
+
+  <nav class="tabbar" aria-label="Navegación principal">
+    <a href="index.html" class="tab active" data-page="explorar">
+      <img src="assets/icons/tabbar-indicator.svg" alt="" class="tab-icon">
+      <span>Explorar</span>
+    </a>
+    <a href="mis-viajes.html" class="tab" data-page="mis-viajes">
+      <img src="assets/icons/icon-map-active.svg" alt="" class="tab-icon">
+      <span>Mis viajes</span>
+    </a>
+    <a href="#" class="tab" data-page="reservar">
+      <img src="assets/icons/icon-tag.svg" alt="" class="tab-icon">
+      <span>Reservar</span>
+    </a>
+    <a href="#" class="tab" data-page="mi-perfil">
+      <img src="assets/icons/icon-user.svg" alt="" class="tab-icon">
+      <span>Mi perfil</span>
+    </a>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/data.js"></script>
+<script src="js/otras-opciones.js"></script>
+</body>
+</html>

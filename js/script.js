@@ -39,55 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Búsqueda por voz próximamente');
   });
 
-  // Resultados de búsqueda en el home
-  const resultsSection = document.getElementById('search-results');
-  const resultsGrid = document.getElementById('search-results-grid');
-  const resultsCount = document.getElementById('search-results-count');
-
-  function renderResults(trips) {
-    resultsGrid.innerHTML = '';
-    if (trips.length === 0) {
-      resultsGrid.innerHTML = '<p class="no-results">No encontramos viajes con esos filtros. Probá ajustar el presupuesto, las fechas o los intereses.</p>';
-    } else {
-      trips.forEach((trip) => {
-        const card = document.createElement('a');
-        card.className = 'card';
-        card.href = '#';
-        card.addEventListener('click', (e) => {
-          e.preventDefault();
-          showToast(`Viste ${trip.nombre} en Resultados de tu búsqueda`);
-        });
-        card.innerHTML = `
-          <div class="card-image"><img src="${trip.imagen}" alt="${trip.nombre}"></div>
-          <div class="card-info">
-            <h3 class="card-title">${trip.nombre}</h3>
-            <p class="card-price">Desde ${formatCurrency(trip.precio)}${trip.porNoche ? ' /noche' : ''}</p>
-          </div>`;
-        resultsGrid.appendChild(card);
-      });
-    }
-    resultsCount.textContent = trips.length ? `(${trips.length})` : '';
-    resultsSection.hidden = false;
-    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  document.getElementById('clear-results').addEventListener('click', () => {
-    resultsSection.hidden = true;
-  });
-
-  // Si venimos de "Otras opciones" en la pantalla de Viaje Recomendado, mostramos esa lista
-  const pendingIds = sessionStorage.getItem('pendingResults');
-  if (pendingIds) {
-    sessionStorage.removeItem('pendingResults');
-    try {
-      const ids = JSON.parse(pendingIds);
-      const trips = ids.map((id) => TRIPS.find((t) => t.id === id)).filter(Boolean);
-      renderResults(trips);
-    } catch (e) {
-      // ignorar datos corruptos
-    }
-  }
-
   // ---------- Modal "Viaje más viable" ----------
 
   const modal = document.getElementById('viaje-modal');
@@ -341,6 +292,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const elegido = elegirMasViable(resultados, { presupuesto, intereses });
+      const otrasOpciones = buscarOtrasOpciones({
+        presupuesto,
+        inicio: rangeStart,
+        fin: rangeEnd,
+        intereses,
+        texto,
+      });
 
       sessionStorage.setItem('viajeBusqueda', JSON.stringify({
         tripId: elegido.id,
@@ -349,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fin: (rangeEnd || rangeStart).toISOString(),
         intereses,
         texto,
-        otros: resultados.map((t) => t.id),
+        otros: otrasOpciones.map((t) => t.id),
       }));
 
       navigateWithFade('viaje-recomendado.html');

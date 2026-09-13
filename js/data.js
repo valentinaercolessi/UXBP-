@@ -260,6 +260,45 @@ function buscarViajes({ presupuesto, inicio, fin, intereses, texto }) {
   });
 }
 
+// "Otras opciones": viajes que NO son totalmente viables (no pasan buscarViajes)
+// pero están cerca de serlo — le piden algo de flexibilidad al usuario porque se
+// pasan del presupuesto por hasta $100.000, o porque sus fechas disponibles no
+// coinciden con las pedidas. Si encajaran en todo ya serían viables, no "otras
+// opciones". Un viaje que se pasa del presupuesto por más de $100.000 queda
+// afuera igual: ya no es "cercano".
+const FLEXIBILIDAD_PRESUPUESTO_MAX = 100000;
+
+function buscarOtrasOpciones({ presupuesto, inicio, fin, intereses, texto }) {
+  return TRIPS.filter((trip) => {
+    if (intereses.length && !trip.intereses.some((i) => intereses.includes(i))) return false;
+    if (texto && !trip.nombre.toLowerCase().includes(texto.toLowerCase())) return false;
+
+    const excedePresupuesto = presupuesto > 0 && trip.precio > presupuesto;
+    const sePasaDemasiado = excedePresupuesto && (trip.precio - presupuesto) > FLEXIBILIDAD_PRESUPUESTO_MAX;
+    if (sePasaDemasiado) return false;
+
+    let fechasNoCoinciden = false;
+    if (inicio && fin) {
+      const tripInicio = parseLocalDate(trip.inicio);
+      const tripFin = parseLocalDate(trip.fin);
+      fechasNoCoinciden = fin < tripInicio || inicio > tripFin;
+    }
+
+    // Ya es totalmente viable (no necesita flexibilidad) → no es "otra opción".
+    if (!excedePresupuesto && !fechasNoCoinciden) return false;
+
+    return true;
+  }).sort((a, b) => {
+    const matchesA = a.intereses.filter((i) => intereses.includes(i)).length;
+    const matchesB = b.intereses.filter((i) => intereses.includes(i)).length;
+    if (matchesA !== matchesB) return matchesB - matchesA;
+
+    if (presupuesto > 0) return Math.abs(presupuesto - a.precio) - Math.abs(presupuesto - b.precio);
+
+    return a.precio - b.precio;
+  });
+}
+
 // Elige el viaje "más viable" dentro de los resultados: prioriza más intereses en común
 // y, a igualdad, el precio más cercano al presupuesto disponible (mejor aprovechamiento).
 // Sin presupuesto definido, "viable" se interpreta como más económico.

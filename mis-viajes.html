@@ -9,11 +9,10 @@
 <body>
 <div class="app">
 
-  <header class="topbar">
-    <img class="logo" src="assets/icons/logo-exploramundo.svg" alt="exploramundo">
-  </header>
-
-  <main class="content mv-content">
+  <div class="mv-page">
+    <header class="topbar">
+      <img class="logo" src="assets/icons/logo-exploramundo.svg" alt="exploramundo">
+    </header>
 
     <h1 class="mv-title">Mis viajes</h1>
 
@@ -23,34 +22,35 @@
       <button type="button" class="mv-segment active" data-segment="guardados" role="tab" aria-selected="true">Guardados</button>
     </div>
 
-    <div class="mv-panel" id="mv-panel-activos" hidden>
-      <p class="mv-empty">Todavía no tenés viajes activos.</p>
+    <div class="mv-body" id="mv-body">
+      <div class="mv-panel" id="mv-panel-activos" hidden>
+        <p class="mv-empty">Todavía no tenés viajes activos.</p>
+      </div>
+
+      <div class="mv-panel" id="mv-panel-pasados" hidden>
+        <p class="mv-empty">Todavía no tenés viajes pasados.</p>
+      </div>
+
+      <div class="mv-panel" id="mv-panel-guardados">
+        <section class="mv-section" id="mv-section-viables" hidden>
+          <h2 class="mv-section-title mv-section-title-viable">
+            <img src="assets/icons/auto_awesome-blue.svg" alt="" class="mv-section-icon">
+            Viables hoy <span class="mv-count" id="mv-count-viables"></span>
+          </h2>
+          <div id="mv-list-viables"></div>
+        </section>
+
+        <hr class="mv-divider" id="mv-divider" hidden>
+
+        <section class="mv-section" id="mv-section-otras" hidden>
+          <h2 class="mv-section-title">Otras opciones <span class="mv-count" id="mv-count-otras"></span></h2>
+          <div id="mv-list-otras"></div>
+        </section>
+
+        <p class="mv-empty" id="mv-empty-guardados" hidden>Todavía no guardaste ningún viaje. Cuando encuentres uno que te guste, tocá "Guardar Viaje".</p>
+      </div>
     </div>
-
-    <div class="mv-panel" id="mv-panel-pasados" hidden>
-      <p class="mv-empty">Todavía no tenés viajes pasados.</p>
-    </div>
-
-    <div class="mv-panel" id="mv-panel-guardados">
-      <section class="mv-section" id="mv-section-viables" hidden>
-        <h2 class="mv-section-title mv-section-title-viable">
-          <img src="assets/icons/auto_awesome-blue.svg" alt="" class="mv-section-icon">
-          Viables hoy <span class="mv-count" id="mv-count-viables"></span>
-        </h2>
-        <div id="mv-list-viables"></div>
-      </section>
-
-      <hr class="mv-divider" id="mv-divider" hidden>
-
-      <section class="mv-section" id="mv-section-otras" hidden>
-        <h2 class="mv-section-title">Otras opciones <span class="mv-count" id="mv-count-otras"></span></h2>
-        <div id="mv-list-otras"></div>
-      </section>
-
-      <p class="mv-empty" id="mv-empty-guardados" hidden>Todavía no guardaste ningún viaje. Cuando encuentres uno que te guste, tocá "Guardar Viaje".</p>
-    </div>
-
-  </main>
+  </div>
 
   <nav class="tabbar" aria-label="Navegación principal">
     <a href="index.html" class="tab" data-page="explorar">

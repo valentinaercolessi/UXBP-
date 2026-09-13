@@ -228,7 +228,9 @@ document.addEventListener('DOMContentLoaded', () => {
     addSavedTrip({
       id: `${trip.id}-${Date.now()}`,
       tripId: trip.id,
-      categoria: 'viable', // llegó acá tocando "Me interesa" en Viaje Recomendado
+      // 'otras' si este viaje se abrió desde la pantalla "Otras opciones";
+      // 'viable' si vino directo del viaje recomendado (el caso por defecto).
+      categoria: data.origen === 'otras' ? 'otras' : 'viable',
       nombre: trip.nombre,
       imagen: trip.imagen,
       inicio: inicio.toISOString(),
