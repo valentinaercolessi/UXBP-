@@ -86,11 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function isSectionOpen(id) {
-    const section = document.getElementById(id);
-    return section && section.classList.contains('open');
-  }
-
   accordionSections.forEach((section) => {
     section.querySelector('.accordion-header').addEventListener('click', () => {
       const willOpen = !section.classList.contains('open');
@@ -107,6 +102,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const PRESUPUESTO_MINIMO_RECOMENDADO = 300000;
 
+  // El resumen junto a "Presupuesto disponible" queda persistente igual que
+  // en Fechas/Intereses/Mente (muestra el monto elegido aunque estés en otro
+  // desplegable). Al cruzar el mínimo recomendado, ese mismo lugar muestra
+  // un aviso en azul por 3 segundos y después vuelve a mostrar el monto.
+  let superabaMinimo = false;
+  let avisoMinimoTimer = null;
+
+  function textoResumenPresupuesto(val) {
+    return val === 0 ? 'Sin definir' : formatCurrency(val);
+  }
+
   function updateBudgetUI() {
     const min = Number(budgetSlider.min);
     const max = Number(budgetSlider.max);
@@ -115,7 +121,29 @@ document.addEventListener('DOMContentLoaded', () => {
     budgetSlider.style.background =
       `linear-gradient(to right, var(--grey-inactive) 0%, var(--grey-inactive) ${percent}%, var(--natural-light) ${percent}%, var(--natural-light) 100%)`;
     budgetValue.textContent = val === 0 ? '$0' : formatCurrency(val);
-    summaryPresupuesto.textContent = val > PRESUPUESTO_MINIMO_RECOMENDADO ? 'Mínimo recomendado' : '';
+
+    const superaMinimo = val > PRESUPUESTO_MINIMO_RECOMENDADO;
+    budgetValue.classList.toggle('sobre-minimo', superaMinimo);
+
+    if (!superaMinimo) {
+      // Por debajo del mínimo (o en $0): sin aviso, muestra el monto ya.
+      clearTimeout(avisoMinimoTimer);
+      summaryPresupuesto.classList.remove('aviso-minimo');
+      summaryPresupuesto.textContent = textoResumenPresupuesto(val);
+    } else if (!superabaMinimo) {
+      // Recién cruza el mínimo: aviso temporal en azul.
+      summaryPresupuesto.textContent = 'Mínimo recomendado';
+      summaryPresupuesto.classList.add('aviso-minimo');
+      clearTimeout(avisoMinimoTimer);
+      avisoMinimoTimer = setTimeout(() => {
+        summaryPresupuesto.classList.remove('aviso-minimo');
+        summaryPresupuesto.textContent = textoResumenPresupuesto(Number(budgetSlider.value));
+      }, 3000);
+    } else if (!summaryPresupuesto.classList.contains('aviso-minimo')) {
+      // Ya pasó el aviso y se sigue moviendo el slider: el monto acompaña.
+      summaryPresupuesto.textContent = textoResumenPresupuesto(val);
+    }
+    superabaMinimo = superaMinimo;
   }
 
   budgetSlider.addEventListener('input', updateBudgetUI);
@@ -172,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
       cell.textContent = String(d).padStart(2, '0');
       if (isInRange(date)) cell.classList.add('selected');
       cell.addEventListener('click', () => {
-        let justCompletedRange = false;
         if (!rangeStart || rangeEnd) {
           rangeStart = date;
           rangeEnd = null;
@@ -180,13 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
           rangeStart = date;
         } else {
           rangeEnd = date;
-          justCompletedRange = true;
         }
         renderCalendar();
         updateFechasSummary();
-        if (justCompletedRange && isSectionOpen('section-fechas')) {
-          setOpenSection('section-intereses');
-        }
       });
       calGridEl.appendChild(cell);
     }
@@ -234,21 +257,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchLoader = document.getElementById('search-loader');
   const SEARCH_DELAY = 3500;
 
-  // Guiones de la huella: se arman una sola vez, sincronizados con la vuelta
-  // del avión (misma duración de 3.2s) para que cada uno se encienda justo
-  // cuando el avión pasa por su posición y enseguida se apague.
-  const loaderTicks = document.getElementById('loader-ticks');
-  const TICK_COUNT = 16;
-  const ORBIT_CYCLE = 3.2;
-  for (let i = 0; i < TICK_COUNT; i++) {
-    const arm = document.createElement('div');
-    arm.className = 'loader-tick-arm';
-    arm.style.transform = `rotate(${(360 / TICK_COUNT) * i}deg)`;
-    const tick = document.createElement('span');
-    tick.className = 'loader-tick';
-    tick.style.animationDelay = `${(ORBIT_CYCLE / TICK_COUNT) * i}s`;
-    arm.appendChild(tick);
-    loaderTicks.appendChild(arm);
+  // Spinner clásico de 12 rayitas radiales (gris inactivo / azul de paso).
+  const loaderSpinner = document.getElementById('loader-spinner');
+  for (let i = 0; i < 12; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'loader-spinner-bar';
+    bar.style.setProperty('--i', i);
+    loaderSpinner.appendChild(bar);
   }
 
   function showLoader() {

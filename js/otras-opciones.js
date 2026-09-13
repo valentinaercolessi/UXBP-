@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const body = document.getElementById('oo-body');
 
   if (!trips.length) {
+    document.getElementById('oo-description').hidden = true;
     body.innerHTML = `
       <p class="oo-empty">No encontramos otras opciones para esta búsqueda.</p>
       <button type="button" class="oo-btn-editar" id="oo-btn-editar">Editar datos ingresados</button>

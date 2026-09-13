@@ -416,7 +416,7 @@ button {
 .modal-close {
   position: absolute;
   top: 10px;
-  right: 14px;
+  right: 18px;
   font-size: 22px;
   line-height: 1;
   color: var(--grey-02);
@@ -491,6 +491,17 @@ button {
   text-overflow: ellipsis;
 }
 
+/* El resumen de presupuesto es persistente como el resto (mismo gris por
+   default); mientras dura el aviso de "Mínimo recomendado" pasa a azul con
+   una transición suave en vez de cambiar de golpe. */
+#summary-presupuesto {
+  transition: color 0.3s ease;
+}
+
+#summary-presupuesto.aviso-minimo {
+  color: var(--blue);
+}
+
 .accordion-chevron {
   flex-shrink: 0;
   width: 12px;
@@ -535,6 +546,11 @@ button {
   color: var(--grey-03);
   letter-spacing: 0.1px;
   margin-bottom: 10px;
+  transition: color 0.3s ease;
+}
+
+.budget-value.sobre-minimo {
+  color: var(--blue);
 }
 
 .budget-slider {
@@ -652,17 +668,15 @@ button {
 
 /* Interests grid inside modal */
 
+/* Cada chip mide lo que ocupa su propio contenido (no una columna pareja),
+   con el mismo padding interno para todos; se acomodan solos en filas. */
 .chips-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px 7px;
   overflow: visible;
   margin: 0;
   padding: 4px 0 2px;
-}
-
-.chips-grid .chip {
-  justify-content: center;
 }
 
 /* "¿Ya tenés algo en mente?" field */
@@ -806,13 +820,16 @@ button {
   margin: 0 0 16px;
 }
 
-/* Carrusel de fotos: pila de cartas en abanico (como un mazo), con la foto del
-   frente destacada y el resto apiladas detrás, asomando apenas a los costados. */
+/* Carrusel de fotos: pila apilada por profundidad (sin inclinación), con la
+   foto del frente destacada y el resto detrás, asomando apenas a los costados;
+   medidas tomadas 1:1 del diseño de Figma (el frame del diseño mide 402px,
+   igual que nuestro ancho de app). */
 
 .carousel {
   position: relative;
-  height: 300px;
+  height: 406px;
   margin: 0 -16px 20px;
+  overflow: hidden;
   touch-action: pan-y;
   cursor: grab;
   user-select: none;
@@ -835,20 +852,37 @@ button {
   position: absolute;
   top: 0;
   left: 0;
-  width: 195px;
-  height: 280px;
-  margin-top: -140px;
-  margin-left: -97.5px;
+  width: 225px;
+  height: 363px;
+  margin-top: -181.5px;
+  margin-left: -112.5px;
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
   background: var(--grey-01);
 }
 
-.carousel-slide img {
+.carousel-slide img,
+.carousel-slide video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.carousel-video-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .carousel-overlay {
@@ -1044,75 +1078,33 @@ button {
   transform: scale(1);
 }
 
-/* El avión recorre el perímetro de un círculo: el pivote gira y arrastra al
-   avión con él, así el ícono va rotando suavemente siguiendo la curva del
-   trayecto (como si estuviera realmente volando en círculo). Los guiones de
-   la huella son marcas fijas que se encienden justo cuando el avión pasa por
-   su posición y enseguida se apagan (no un círculo punteado siempre visible). */
+/* Spinner clásico de rayitas radiales (como el de iOS): 12 barras grises fijas
+   por las que va "pasando" el azul una por una, en loop. */
 
-.loader-orbit-wrap {
+.loader-spinner {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 44px;
+  height: 44px;
 }
 
-.loader-ticks {
-  position: absolute;
-  inset: 0;
-}
-
-.loader-tick-arm {
+.loader-spinner-bar {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0;
-  height: 0;
+  width: 3px;
+  height: 10px;
+  margin: -13px 0 0 -1.5px;
+  border-radius: 1.5px;
+  background: var(--grey-inactive);
+  transform: rotate(calc(var(--i) * 30deg)) translateY(-12px);
+  animation: loader-spinner-fade 1.2s linear infinite;
+  animation-delay: calc(var(--i) * -0.1s);
 }
 
-.loader-tick {
-  position: absolute;
-  top: -23px;
-  left: -1px;
-  width: 2px;
-  height: 7px;
-  border-radius: 1px;
-  background: var(--blue);
-  opacity: 0;
-  transform: rotate(90deg);
-  animation: loader-tick-fade 3.2s ease-out infinite;
-}
-
-@keyframes loader-tick-fade {
-  0% { opacity: 0.85; }
-  22% { opacity: 0; }
-  100% { opacity: 0; }
-}
-
-.loader-orbit {
-  position: absolute;
-  inset: 0;
-  animation: loader-orbit-spin 3.2s linear infinite;
-}
-
-.loader-orbit-pos {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 26px;
-  height: 26px;
-  margin-left: -13px;
-}
-
-.loader-plane {
-  width: 100%;
-  height: 100%;
-  color: var(--blue);
-  transform: rotate(90deg);
-}
-
-@keyframes loader-orbit-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes loader-spinner-fade {
+  0% { background: var(--blue); }
+  25% { background: var(--grey-inactive); }
+  100% { background: var(--grey-inactive); }
 }
 
 .loader-text {
