@@ -230,29 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Intereses (dentro del modal)
   setupChipGroup(document.getElementById('modal-chips'), document.getElementById('modal-add-chip'));
 
-  // Adjuntar archivo / "¿Ya tenés algo en mente?"
-  const attachBtn = document.getElementById('attach-btn');
-  const attachInput = document.getElementById('attach-input');
-  const menteInput = document.getElementById('mente-input');
-  const summaryMente = document.getElementById('summary-mente');
-
-  function updateMenteSummary() {
-    const val = menteInput.value.trim();
-    summaryMente.textContent = val || 'Sin definir';
-  }
-
-  menteInput.addEventListener('input', updateMenteSummary);
-
-  attachBtn.addEventListener('click', () => attachInput.click());
-  attachInput.addEventListener('change', () => {
-    const file = attachInput.files[0];
-    if (file) {
-      menteInput.value = file.name;
-      updateMenteSummary();
-      showToast(`Adjuntaste "${file.name}"`);
-    }
-  });
-
   // Loader: se muestra mientras "buscamos" el viaje más viable
   const searchLoader = document.getElementById('search-loader');
   const SEARCH_DELAY = 3500;
@@ -273,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('buscar-viaje-btn').addEventListener('click', () => {
     const presupuesto = Number(budgetSlider.value);
     const intereses = Array.from(document.querySelectorAll('#modal-chips .chip.active')).map((c) => c.dataset.chip);
-    const texto = menteInput.value.trim();
     // El calendario arranca sin selección; si no se eligió nada, buscamos
     // igual con un rango por defecto en vez de bloquear la búsqueda.
     const busquedaInicio = rangeStart || new Date(2025, 9, 14);
@@ -284,7 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
       inicio: busquedaInicio,
       fin: busquedaFin,
       intereses,
-      texto,
     });
 
     closeModal();
@@ -305,7 +280,6 @@ document.addEventListener('DOMContentLoaded', () => {
         inicio: busquedaInicio,
         fin: busquedaFin,
         intereses,
-        texto,
       });
 
       sessionStorage.setItem('viajeBusqueda', JSON.stringify({
@@ -314,7 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
         inicio: busquedaInicio.toISOString(),
         fin: busquedaFin.toISOString(),
         intereses,
-        texto,
         otros: otrasOpciones.map((t) => t.id),
       }));
 
