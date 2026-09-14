@@ -718,10 +718,23 @@ button {
 
 /* ===== Pantalla: Viaje Recomendado ===== */
 
+/* Viaje Recomendado: la pantalla entera (header + feed + cards + botones +
+   tabbar) debe entrar sin scroll vertical. Todo mantiene su tamaño natural;
+   solo el carrusel de fotos se achica lo necesario para ceder el espacio
+   que falte (ver .carousel / .carousel-ring más abajo). */
+.reco-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 .reco-header {
   position: sticky;
   top: 0;
   z-index: 40;
+  flex-shrink: 0;
   background: var(--natural-light);
   display: flex;
   align-items: center;
@@ -753,11 +766,16 @@ button {
 }
 
 .reco-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   padding-top: 4px;
   padding-bottom: calc(150px + env(safe-area-inset-bottom));
 }
 
 .reco-destination {
+  flex-shrink: 0;
   margin: 8px 0 16px;
   font-family: var(--font-rounded);
   font-weight: 600;
@@ -767,6 +785,7 @@ button {
 }
 
 .reco-stats {
+  flex-shrink: 0;
   display: flex;
   align-items: flex-start;
   gap: 40px;
@@ -815,6 +834,7 @@ button {
 }
 
 .reco-divider {
+  flex-shrink: 0;
   border: none;
   border-top: 1px solid var(--grey-01);
   margin: 0 0 16px;
@@ -823,11 +843,18 @@ button {
 /* Carrusel de fotos: pila apilada por profundidad (sin inclinación), con la
    foto del frente destacada y el resto detrás, asomando apenas a los costados;
    medidas tomadas 1:1 del diseño de Figma (el frame del diseño mide 402px,
-   igual que nuestro ancho de app). */
+   igual que nuestro ancho de app). Es el único bloque que cede espacio: en
+   pantallas bajas su altura se achica (flex-shrink) y .carousel-ring escala
+   todo el contenido (fotos, offsets, badges) en la misma proporción vía
+   container query units, para que se achique de forma pareja en vez de
+   recortarse. En pantallas con espacio de sobra queda en su tamaño 1:1. */
 
 .carousel {
   position: relative;
-  height: 406px;
+  container-type: size;
+  flex: 1 1 406px;
+  max-height: 406px;
+  min-height: 200px;
   margin: 0 -16px 20px;
   overflow: hidden;
   touch-action: pan-y;
@@ -846,6 +873,7 @@ button {
   left: 50%;
   width: 0;
   height: 0;
+  transform: scale(calc(100cqh / 406));
 }
 
 .carousel-slide {
@@ -942,6 +970,7 @@ button {
 /* Tarjetas de vuelo / alojamiento */
 
 .reco-cards {
+  flex-shrink: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
@@ -1097,8 +1126,8 @@ button {
   border-radius: 1.5px;
   background: var(--grey-inactive);
   transform: rotate(calc(var(--i) * 30deg)) translateY(-12px);
-  animation: loader-spinner-fade 1.2s linear infinite;
-  animation-delay: calc(var(--i) * -0.1s);
+  animation: loader-spinner-fade 2.4s linear infinite;
+  animation-delay: calc(var(--i) * 0.2s);
 }
 
 @keyframes loader-spinner-fade {
