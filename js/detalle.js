@@ -62,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('detalle-destination').textContent = trip.nombre;
 
-  function formatFechaHora(date, hora) {
-    return `${date.getDate()} ${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()} · ${hora}hs`;
+  function formatFecha(date) {
+    return `${date.getDate()} ${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}`;
   }
 
   // ---------- Estado ----------
@@ -137,11 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const alt = FLIGHT_ALT_POOL[flightAltIndex];
     const aerolinea = alt.aerolinea || trip.vuelo.aerolinea;
 
-    document.getElementById('ida-fecha').textContent = formatFechaHora(inicio, alt.horaIda);
+    document.getElementById('ida-fecha').textContent = formatFecha(inicio);
+    document.getElementById('ida-hora').textContent = `${alt.horaIda}hs`;
     document.getElementById('ida-aerolinea').textContent = aerolinea;
     document.getElementById('ida-ruta').textContent = `${trip.aeropuertoOrigen} → ${trip.aeropuertoDestino}`;
 
-    document.getElementById('vuelta-fecha').textContent = formatFechaHora(fin, alt.horaVuelta);
+    document.getElementById('vuelta-fecha').textContent = formatFecha(fin);
+    document.getElementById('vuelta-hora').textContent = `${alt.horaVuelta}hs`;
     document.getElementById('vuelta-aerolinea').textContent = aerolinea;
     document.getElementById('vuelta-ruta').textContent = `${trip.aeropuertoDestino} → ${trip.aeropuertoOrigen}`;
   }
@@ -157,7 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const imagen = (!alt.nombre && trip.alojamiento.imagen) || alt.imagen;
 
     document.getElementById('hotel-nombre').textContent = nombre;
-    document.getElementById('hotel-habitacion').textContent = `${habitacion} · ${trip.alojamiento.capacidad}`;
+    document.getElementById('hotel-habitacion').textContent = habitacion;
+    document.getElementById('hotel-capacidad').textContent = trip.alojamiento.capacidad;
     document.getElementById('hotel-distancia').textContent = distancia;
     document.getElementById('hotel-photo-img').src = imagen;
     document.getElementById('hotel-photo-img').alt = nombre;

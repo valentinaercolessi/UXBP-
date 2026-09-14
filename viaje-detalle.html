@@ -52,15 +52,18 @@
       </button>
 
       <div class="esencial-row" id="row-ida">
-        <div class="esencial-label">
-          <img src="assets/icons/plane-group1.svg" class="esencial-icon esencial-icon-ida" alt="">
-          <span>VUELO DE IDA</span>
-        </div>
-        <p class="esencial-title" id="ida-fecha">—</p>
-        <p class="esencial-sub" id="ida-aerolinea">—</p>
-        <div class="esencial-detail-row">
-          <p class="esencial-detail" id="ida-ruta">—</p>
-          <img src="assets/icons/icons-briefcase.svg" class="esencial-extra-icon" alt="Equipaje de mano">
+        <div class="esencial-info">
+          <div class="esencial-label">
+            <img src="assets/icons/plane-group1.svg" class="esencial-icon esencial-icon-ida" alt="">
+            <span>VUELO DE IDA</span>
+          </div>
+          <p class="esencial-title" id="ida-fecha">—</p>
+          <p class="esencial-hora" id="ida-hora">—</p>
+          <p class="esencial-sub esencial-sub-small" id="ida-aerolinea">—</p>
+          <div class="esencial-detail-row">
+            <p class="esencial-detail" id="ida-ruta">—</p>
+            <img src="assets/icons/icons-briefcase.svg" class="esencial-extra-icon" alt="Equipaje de mano">
+          </div>
         </div>
         <button type="button" class="price-pill price-pill-fixed selected" id="ida-precio">
           <svg class="price-pill-icon price-pill-icon-check" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L9.5 17L19 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -72,15 +75,18 @@
       <hr class="esencial-sep">
 
       <div class="esencial-row" id="row-vuelta">
-        <div class="esencial-label">
-          <img src="assets/icons/plane-group1.svg" class="esencial-icon esencial-icon-vuelta" alt="">
-          <span>VUELO DE VUELTA</span>
-        </div>
-        <p class="esencial-title" id="vuelta-fecha">—</p>
-        <p class="esencial-sub" id="vuelta-aerolinea">—</p>
-        <div class="esencial-detail-row">
-          <p class="esencial-detail" id="vuelta-ruta">—</p>
-          <img src="assets/icons/icons-briefcase.svg" class="esencial-extra-icon" alt="Equipaje de mano">
+        <div class="esencial-info">
+          <div class="esencial-label">
+            <img src="assets/icons/plane-group1.svg" class="esencial-icon esencial-icon-vuelta" alt="">
+            <span>VUELO DE VUELTA</span>
+          </div>
+          <p class="esencial-title" id="vuelta-fecha">—</p>
+          <p class="esencial-hora" id="vuelta-hora">—</p>
+          <p class="esencial-sub esencial-sub-small" id="vuelta-aerolinea">—</p>
+          <div class="esencial-detail-row">
+            <p class="esencial-detail" id="vuelta-ruta">—</p>
+            <img src="assets/icons/icons-briefcase.svg" class="esencial-extra-icon" alt="Equipaje de mano">
+          </div>
         </div>
         <button type="button" class="price-pill price-pill-fixed selected" id="vuelta-precio">
           <svg class="price-pill-icon price-pill-icon-check" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L9.5 17L19 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -95,26 +101,30 @@
         <img src="assets/icons/refresh-arrows.svg" alt="">
       </button>
 
+      <div class="esencial-label">
+        <img src="assets/icons/house-key.svg" class="esencial-icon" alt="">
+        <span>ALOJAMIENTO</span>
+      </div>
+
+      <div class="esencial-photo">
+        <img id="hotel-photo-img" src="" alt="">
+      </div>
+
       <div class="esencial-row" id="row-hotel">
-        <div class="esencial-label">
-          <img src="assets/icons/house-key.svg" class="esencial-icon" alt="">
-          <span>ALOJAMIENTO</span>
-        </div>
-        <p class="esencial-title" id="hotel-nombre">—</p>
-        <p class="esencial-sub" id="hotel-habitacion">—</p>
-        <div class="esencial-detail-row">
-          <p class="esencial-detail" id="hotel-distancia">—</p>
-          <img src="assets/icons/local-cafe.svg" class="esencial-extra-icon" id="detalle-aloj-desayuno" alt="Desayuno incluido">
+        <div class="esencial-info">
+          <p class="esencial-title" id="hotel-nombre">—</p>
+          <p class="esencial-sub" id="hotel-habitacion">—</p>
+          <p class="esencial-sub esencial-sub-small" id="hotel-capacidad">—</p>
+          <div class="esencial-detail-row">
+            <p class="esencial-detail" id="hotel-distancia">—</p>
+            <img src="assets/icons/local-cafe.svg" class="esencial-extra-icon" id="detalle-aloj-desayuno" alt="Desayuno incluido">
+          </div>
         </div>
         <button type="button" class="price-pill price-pill-fixed selected" id="hotel-precio">
           <svg class="price-pill-icon price-pill-icon-check" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L9.5 17L19 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <svg class="price-pill-icon price-pill-icon-plus" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           <span class="price-pill-amount">$0</span>
         </button>
-      </div>
-
-      <div class="esencial-photo">
-        <img id="hotel-photo-img" src="" alt="">
       </div>
     </div>
 

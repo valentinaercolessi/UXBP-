@@ -780,10 +780,11 @@ button {
   flex: 1;
   min-height: 0;
   padding-top: 4px;
-  /* Justo lo necesario para no tapar los botones fijos (bottom:89px + su
+  /* Ya no hay tabbar en esta pantalla (queda la flecha de volver del header):
+     justo lo necesario para no tapar los botones fijos (bottom:16px + su
      alto de 44px) más un margen chico de respiro; el resto de ese espacio
      se lo devolvemos al feed, que es el que crece con flex. */
-  padding-bottom: calc(133px + env(safe-area-inset-bottom));
+  padding-bottom: calc(60px + env(safe-area-inset-bottom));
 }
 
 .reco-destination {
@@ -792,7 +793,7 @@ button {
   font-family: var(--font-rounded);
   font-weight: 600;
   font-size: 21px;
-  color: var(--grey-03);
+  color: #272727;
   letter-spacing: 0.1px;
 }
 
@@ -855,6 +856,13 @@ button {
   margin: 0 0 16px;
 }
 
+/* Un poco menos de aire antes del carrusel de fotos, para darle ese espacio
+   de vuelta a las imágenes (el carrusel crece con flex y ocupa lo que se
+   le libere). */
+.reco-divider-tight {
+  margin-bottom: 13px;
+}
+
 /* Carrusel de fotos: pila apilada por profundidad (sin inclinación), con la
    foto del frente destacada y el resto detrás, asomando apenas a los costados;
    medidas tomadas 1:1 del diseño de Figma (el frame del diseño mide 402px,
@@ -872,7 +880,7 @@ button {
   flex: 1 1 406px;
   max-height: 406px;
   min-height: 160px;
-  margin: 0 -16px 20px;
+  margin: 0 -16px 17px;
   overflow: hidden;
   touch-action: pan-y;
   cursor: grab;
@@ -1067,7 +1075,7 @@ button {
 .reco-actions {
   position: fixed;
   left: 50%;
-  bottom: calc(89px + env(safe-area-inset-bottom));
+  bottom: calc(16px + env(safe-area-inset-bottom));
   transform: translateX(-50%);
   width: calc(100% - 32px);
   max-width: 368px;
@@ -1232,9 +1240,9 @@ button {
 }
 
 .price-current {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 16px;
+  font-family: var(--font-rounded);
+  font-weight: 600;
+  font-size: 19px;
   color: var(--blue);
 }
 
@@ -1245,15 +1253,14 @@ button {
   gap: 2px;
 }
 
-/* Aclaran qué es cada número (el costo elegido vs. el presupuesto que
-   ingresaste al buscar) con la tipografía más chica que se usa en esta
-   pantalla (la misma de "ACTIVIDADES") y la misma letter-spacing que ya
-   usamos ahí — sin inventar un espaciado nuevo. */
+/* Misma tipografía, tamaño y espaciado que el label "VUELO DE IDA" de Lo
+   esencial (.esencial-label span) — solo cambian los colores, que se
+   mantienen igual que antes. */
 .price-current-label,
 .price-max-label {
   font-family: var(--font-rounded);
-  font-size: 9px;
-  letter-spacing: 0.8px;
+  font-size: 10px;
+  letter-spacing: 0.5px;
 }
 
 .price-current-label {
@@ -1261,13 +1268,14 @@ button {
 }
 
 .price-max-label {
-  color: var(--grey-01);
+  color: #bfbfbf;
 }
 
 .price-max {
-  font-family: var(--font-display);
-  font-size: 16px;
-  color: var(--grey-01);
+  font-family: var(--font-rounded);
+  font-weight: 600;
+  font-size: 19px;
+  color: #bfbfbf;
 }
 
 .price-track {
@@ -1333,8 +1341,8 @@ button {
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
   z-index: 2;
   border-radius: 50%;
   background: var(--blue);
@@ -1345,7 +1353,7 @@ button {
 }
 
 .esencial-refresh img {
-  width: 8.75px;
+  width: 10.75px;
   height: auto;
   transition: transform 0.4s ease;
 }
@@ -1354,9 +1362,20 @@ button {
   transform: rotate(360deg);
 }
 
+/* Flex en vez de absolute+top:50%: así el pill se centra respecto a la
+   altura real de CADA fila tal cual el browser la calculó, sin depender de
+   un cálculo aparte que podía desalinearse si el contenido de una fila
+   terminaba siendo un poco más alto/bajo que el de la otra. */
 .esencial-row {
-  position: relative;
-  padding-right: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.esencial-info {
+  min-width: 0;
+  flex: 1;
 }
 
 .esencial-label {
@@ -1385,29 +1404,42 @@ button {
   font-family: var(--font-rounded);
   font-size: 10px;
   letter-spacing: 0.5px;
-  color: var(--grey-02);
+  color: var(--blue);
 }
 
 .esencial-title {
-  margin: 0 0 3px;
+  /* Un poco más de aire hacia la línea siguiente que el resto de los
+     espacios internos de la card (que sí son todos iguales entre sí),
+     para que el texto más grande respire más. */
+  margin: 0 0 8px;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 19px;
   color: #272727;
 }
 
-.esencial-sub {
-  margin: 0 0 4px;
+.esencial-hora {
+  margin: 4px 0 6px;
   font-family: var(--font-display);
-  font-size: 12px;
-  color: #272727;
+  font-size: 17px;
+  color: var(--grey-02);
+}
+
+.esencial-sub {
+  margin: 4px 0 6px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--grey-02);
+}
+
+.esencial-sub-small {
+  font-size: 14px;
 }
 
 .esencial-detail {
   margin: 0;
-  font-family: var(--font-rounded);
-  font-size: 10px;
-  letter-spacing: 0.5px;
+  font-family: var(--font-display);
+  font-size: 12px;
   color: var(--grey-02);
 }
 
@@ -1418,14 +1450,20 @@ button {
 }
 
 .esencial-extra-icon {
-  width: 12px;
+  width: auto;
   height: 12px;
   flex-shrink: 0;
 }
 
+/* El de café (desayuno incluido) un poco más grande que el resto, a tono
+   con el tamaño del texto que acompaña. */
+#detalle-aloj-desayuno {
+  height: 14px;
+}
+
 .esencial-sep {
   border: none;
-  border-top: 1px solid var(--natural-light);
+  border-top: 2px solid var(--natural-light);
   margin: 14px 0;
 }
 
@@ -1448,9 +1486,15 @@ button {
 }
 
 .price-pill-fixed {
-  position: absolute;
-  top: 30px;
-  right: 0;
+  flex-shrink: 0;
+  /* La fila queda 18px adentro del borde de la card (el padding lateral de
+     .esencial-card) pero el círculo de refresh está a solo 12px: este -6px
+     compensa esa diferencia para que ambos corten en la misma línea vertical. */
+  margin-right: -6px;
+  height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
+  letter-spacing: normal;
 }
 
 .price-pill.selected {
@@ -1488,7 +1532,7 @@ button {
 /* Foto del alojamiento */
 
 .esencial-photo {
-  margin-top: 14px;
+  margin: 16px 0 14px;
   height: 140px;
   border-radius: 10px;
   overflow: hidden;
@@ -1516,14 +1560,14 @@ button {
   align-items: center;
   gap: 6px;
   padding: 0 18px;
-  margin-bottom: 12px;
-  font-size: 9px;
+  margin-bottom: 16px;
+  font-size: 10px;
 }
 
 .shared-header span {
   font-family: var(--font-rounded);
   letter-spacing: 0.8px;
-  color: var(--grey-02);
+  color: var(--blue);
 }
 
 /* Alto = 1em del propio .shared-header (9px), para seguir el tamaño del
@@ -1555,7 +1599,7 @@ button {
 .shared-item-image {
   position: relative;
   width: 100%;
-  height: 90px;
+  height: 140px;
   border-radius: 10px;
   overflow: hidden;
   background: var(--grey-01);
@@ -1571,8 +1615,8 @@ button {
 .shared-item-name {
   margin: 0 0 8px;
   font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 13px;
+  font-weight: 400;
+  font-size: 14px;
   color: #272727;
   white-space: nowrap;
   overflow: hidden;
