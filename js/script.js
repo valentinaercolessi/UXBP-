@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeModal() {
     modal.classList.remove('open');
     document.body.style.overflow = '';
-    setTimeout(() => { modal.hidden = true; }, 250);
+    setTimeout(() => { modal.hidden = true; }, 400);
   }
 
   ctaViable.addEventListener('click', openModal);
@@ -257,15 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchLoader = document.getElementById('search-loader');
   const SEARCH_DELAY = 3500;
 
-  // Spinner clásico de 12 rayitas radiales (gris inactivo / azul de paso).
-  const loaderSpinner = document.getElementById('loader-spinner');
-  for (let i = 0; i < 12; i++) {
-    const bar = document.createElement('div');
-    bar.className = 'loader-spinner-bar';
-    bar.style.setProperty('--i', i);
-    loaderSpinner.appendChild(bar);
-  }
-
   function showLoader() {
     searchLoader.hidden = false;
     requestAnimationFrame(() => {
@@ -327,7 +318,10 @@ document.addEventListener('DOMContentLoaded', () => {
         otros: otrasOpciones.map((t) => t.id),
       }));
 
-      navigateWithFade('viaje-recomendado.html');
+      // Fade de salida más lento (y con un extra de espera) para que la
+      // transición del loader hacia la pantalla de resultado se sienta más
+      // pausada que una navegación común.
+      navigateWithFade('viaje-recomendado.html', 150, true);
     }, SEARCH_DELAY);
   });
 });

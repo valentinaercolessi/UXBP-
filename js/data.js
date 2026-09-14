@@ -16,7 +16,7 @@ const TRIPS = [
     aeropuertoOrigen: 'AEP',
     aeropuertoDestino: 'MDZ',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
-    alojamiento: { nombre: 'Zonda Hotel & Spa', habitacion: 'Habitación Superior', desayuno: true, capacidad: '2 personas', distancia: '2.1km del centro' },
+    alojamiento: { nombre: 'Huentala Hotel', habitacion: 'Habitación Superior', desayuno: true, capacidad: '2 personas', distancia: '2.1km del centro', imagen: 'assets/images/feed/hotel-huentala-mendoza.jpg' },
   },
   {
     id: 2,
@@ -34,7 +34,7 @@ const TRIPS = [
     aeropuertoOrigen: 'EZE',
     aeropuertoDestino: 'PTY',
     vuelo: { aerolinea: 'Copa Airlines' },
-    alojamiento: { nombre: 'Trump Ocean Club', habitacion: 'Habitación Vista al Mar', desayuno: true, capacidad: '2 personas', distancia: '350m de la playa' },
+    alojamiento: { nombre: 'JW Marriott Panama', habitacion: 'Habitación Vista al Mar', desayuno: true, capacidad: '2 personas', distancia: '350m de la playa', imagen: 'assets/images/feed/hotel-jwmarriott-panama.jpg' },
   },
   {
     id: 3,
@@ -88,7 +88,7 @@ const TRIPS = [
     aeropuertoOrigen: 'AEP',
     aeropuertoDestino: 'BRC',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
-    alojamiento: { nombre: 'Luma Boutique Hotel', habitacion: 'Habitación Deluxe', desayuno: true, capacidad: '2 personas', distancia: '490m del centro' },
+    alojamiento: { nombre: 'NBH Nativo Boutique Hotel', habitacion: 'Habitación Deluxe', desayuno: true, capacidad: '2 personas', distancia: '490m del centro', imagen: 'assets/images/feed/hotel-nbh-bariloche.jpg' },
   },
   {
     id: 6,
@@ -106,7 +106,7 @@ const TRIPS = [
     aeropuertoOrigen: 'EZE',
     aeropuertoDestino: 'CUZ',
     vuelo: { aerolinea: 'LATAM' },
-    alojamiento: { nombre: 'Casa Andina Premium', habitacion: 'Habitación Ejecutiva', desayuno: true, capacidad: '2 personas', distancia: '800m de la plaza principal' },
+    alojamiento: { nombre: 'Casa Andina Premium Cusco', habitacion: 'Habitación Ejecutiva', desayuno: true, capacidad: '2 personas', distancia: '800m de la plaza principal', imagen: 'assets/images/feed/hotel-casaandina-cusco.jpg' },
   },
   {
     id: 7,
@@ -124,7 +124,7 @@ const TRIPS = [
     aeropuertoOrigen: 'EZE',
     aeropuertoDestino: 'FCO',
     vuelo: { aerolinea: 'ITA Airways' },
-    alojamiento: { nombre: 'Hotel Artemide', habitacion: 'Habitación Classic', desayuno: false, capacidad: '2 personas', distancia: '1.5km del Coliseo' },
+    alojamiento: { nombre: 'Hotel Artemide', habitacion: 'Habitación Classic', desayuno: false, capacidad: '2 personas', distancia: '1.5km del Coliseo', imagen: 'assets/images/feed/hotel-artemide-roma.jpg' },
   },
   {
     id: 8,
@@ -176,7 +176,7 @@ const TRIPS = [
     aeropuertoOrigen: 'AEP',
     aeropuertoDestino: 'SLA',
     vuelo: { aerolinea: 'Aerolíneas Argentinas' },
-    alojamiento: { nombre: 'Legado Mítico Salta', habitacion: 'Habitación Patio', desayuno: true, capacidad: '2 personas', distancia: '1km del centro histórico' },
+    alojamiento: { nombre: 'Legado Mítico Salta', habitacion: 'Habitación Patio', desayuno: true, capacidad: '2 personas', distancia: '1km del centro histórico', imagen: 'assets/images/feed/hotel-legadomitico-salta.jpg' },
   },
 ];
 
@@ -347,8 +347,15 @@ function formatDiferenciaOtras(trip, costoTotal, presupuesto, inicio, fin) {
 // Elige el viaje "más viable" dentro de los resultados: prioriza más intereses en común
 // y, a igualdad, el precio más cercano al presupuesto disponible (mejor aprovechamiento).
 // Sin presupuesto definido, "viable" se interpreta como más económico.
+//
+// El resultado siempre queda por debajo del presupuesto (buscarViajes ya descarta lo que
+// se pasa) e, idealmente, a no más de $200.000 de diferencia: primero se intenta elegir
+// entre los que cumplen ese margen y, solo si ninguno lo cumple, se elige entre todos
+// igual (mejor un resultado más lejos del presupuesto que ningún resultado).
+const MARGEN_PRESUPUESTO_IDEAL = 200000;
+
 function elegirMasViable(trips, { presupuesto, intereses }) {
-  return [...trips].sort((a, b) => {
+  function comparar(a, b) {
     const matchesA = a.intereses.filter((i) => intereses.includes(i)).length;
     const matchesB = b.intereses.filter((i) => intereses.includes(i)).length;
     if (matchesA !== matchesB) return matchesB - matchesA;
@@ -356,7 +363,14 @@ function elegirMasViable(trips, { presupuesto, intereses }) {
     if (presupuesto > 0) return Math.abs(presupuesto - a.precio) - Math.abs(presupuesto - b.precio);
 
     return a.precio - b.precio;
-  })[0];
+  }
+
+  if (presupuesto > 0) {
+    const dentroDelMargen = trips.filter((t) => presupuesto - t.precio <= MARGEN_PRESUPUESTO_IDEAL);
+    if (dentroDelMargen.length) return [...dentroDelMargen].sort(comparar)[0];
+  }
+
+  return [...trips].sort(comparar)[0];
 }
 
 // ---------- Pantalla de detalle ("Me interesa") ----------
@@ -369,14 +383,27 @@ const FLIGHT_ALT_POOL = [
   { aerolinea: 'JetSMART', horaIda: '14:20', horaVuelta: '09:15', mult: 1.08 },
 ];
 
-// Alternativas de alojamiento para el botón de refrescar (mismo criterio: la primera
-// reconstruye el hotel y precio originales). Cada una trae su propia foto real del
-// hotel (exterior/interior), para que la imagen cambie junto con la opción elegida.
-const HOTEL_ALT_POOL = [
-  { nombre: null, habitacion: null, distancia: null, mult: 1, imagen: 'assets/images/feed/hotel-original.jpg' },
-  { nombre: 'Aires del Sur Hotel', habitacion: 'Habitación Superior', distancia: '750m del centro', mult: 0.91, imagen: 'assets/images/feed/hotel-alt1-exterior.jpg' },
-  { nombre: 'Costanera Suites', habitacion: 'Habitación Ejecutiva', distancia: '1.1km del centro', mult: 1.09, imagen: 'assets/images/feed/hotel-alt2-cabin.jpg' },
-];
+// Alternativas de alojamiento para el botón de refrescar, por categoría de
+// destino (igual criterio que PHOTO_POOLS/ACTIVITIES_BY_CATEGORIA): así la
+// foto siempre va acorde al tipo de lugar — nunca aparece una cabaña de
+// montaña como opción para un hotel de playa o de ciudad. La primera de
+// cada categoría (mult 1) reconstruye el hotel y precio originales del viaje.
+const HOTEL_ALT_POOL_BY_CATEGORIA = {
+  montana: [
+    { nombre: null, habitacion: null, distancia: null, mult: 1, imagen: 'assets/images/feed/hotel-alt2-cabin.jpg' },
+    { nombre: 'Refugio Cumbre Azul', habitacion: 'Suite con vista a la montaña', distancia: '1.2km del centro de esquí', mult: 0.91, imagen: 'assets/images/feed/hotel-montana-chalet.jpg' },
+    { nombre: 'Posada del Cerro', habitacion: 'Habitación Deluxe', distancia: '600m del centro', mult: 1.09, imagen: 'assets/images/feed/hotel-montana-cliffside.jpg' },
+  ],
+  playa: [
+    { nombre: null, habitacion: null, distancia: null, mult: 1, imagen: 'assets/images/feed/hotel-playa-tower.jpg' },
+    { nombre: 'Costa Serena Resort', habitacion: 'Habitación Vista al Mar', distancia: '80m de la playa', mult: 0.91, imagen: 'assets/images/feed/hotel-playa-palmwalk.jpg' },
+    { nombre: 'Palmares Beach Club', habitacion: 'Suite Junior', distancia: '150m de la playa', mult: 1.09, imagen: 'assets/images/feed/hotel-playa-courtyard.jpg' },
+  ],
+  ciudad: [
+    { nombre: null, habitacion: null, distancia: null, mult: 1, imagen: 'assets/images/feed/hotel-original.jpg' },
+    { nombre: 'Torre Central Hotel', habitacion: 'Habitación Ejecutiva', distancia: '400m de la plaza principal', mult: 0.91, imagen: 'assets/images/feed/hotel-alt1-exterior.jpg' },
+  ],
+};
 
 // Actividades: una por categoría de destino (montaña/playa/ciudad), con una foto que
 // coincide exactamente con el texto Y con el tipo de destino (alguien haciendo trekking

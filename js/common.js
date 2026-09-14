@@ -80,12 +80,16 @@ function removeSavedTrip(id) {
 // Transición progresiva entre pantallas: la página actual se desvanece antes de
 // navegar, y la que llega arranca desvanecida y se asienta hacia adentro (ver abajo).
 // Entre las dos, el cambio de pantalla se siente fluido y dinámico, no instantáneo.
-const PAGE_FADE_MS = 320;
+const PAGE_FADE_MS = 460;
+const PAGE_FADE_SLOW_MS = 900;
 
-function navigateWithFade(url, extraDelay = 0) {
+function navigateWithFade(url, extraDelay = 0, slow = false) {
   const app = document.querySelector('.app');
-  if (app) app.classList.remove('page-visible');
-  setTimeout(() => { window.location.href = url; }, PAGE_FADE_MS + extraDelay);
+  if (app) {
+    if (slow) app.classList.add('page-fade-slow');
+    app.classList.remove('page-visible');
+  }
+  setTimeout(() => { window.location.href = url; }, (slow ? PAGE_FADE_SLOW_MS : PAGE_FADE_MS) + extraDelay);
 }
 
 (function fadeInOnLoad() {

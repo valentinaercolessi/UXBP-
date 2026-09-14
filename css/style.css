@@ -39,8 +39,14 @@ body {
   position: relative;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
   opacity: 0;
-  transform: translateY(10px) scale(0.99);
-  transition: opacity 0.34s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.34s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transform: translateY(14px) scale(0.985);
+  transition: opacity 0.46s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.46s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Salida más lenta y pausada: usada al pasar del loader de búsqueda a Viaje
+   Recomendado, donde el cambio de pantalla pesa más que una navegación común. */
+.app.page-fade-slow {
+  transition-duration: 0.9s;
 }
 
 .app.page-visible {
@@ -383,7 +389,7 @@ button {
   justify-content: center;
   padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   z-index: 100;
-  transition: background 0.25s ease;
+  transition: background 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .modal-overlay[hidden] {
@@ -407,8 +413,8 @@ button {
   padding: 22px 18px 18px;
   -webkit-overflow-scrolling: touch;
   opacity: 0;
-  transform: translateY(10px) scale(0.98);
-  transition: opacity 0.22s ease, transform 0.22s ease;
+  transform: translateY(14px) scale(0.97);
+  transition: opacity 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .modal-overlay.open .modal-panel {
@@ -774,7 +780,10 @@ button {
   flex: 1;
   min-height: 0;
   padding-top: 4px;
-  padding-bottom: calc(150px + env(safe-area-inset-bottom));
+  /* Justo lo necesario para no tapar los botones fijos (bottom:89px + su
+     alto de 44px) más un margen chico de respiro; el resto de ese espacio
+     se lo devolvemos al feed, que es el que crece con flex. */
+  padding-bottom: calc(133px + env(safe-area-inset-bottom));
 }
 
 .reco-destination {
@@ -817,14 +826,12 @@ button {
 
 .reco-interest-icons {
   display: flex;
-  gap: 6px;
+  gap: 2px;
 }
 
 .reco-interest-icon {
   width: 24px;
   height: 24px;
-  border-radius: 50%;
-  border: 1px solid var(--grey-03);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -832,8 +839,13 @@ button {
 }
 
 .reco-interest-icon img {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
+}
+
+.reco-interest-icon img[alt="arte"] {
+  width: 16px;
+  height: 16px;
 }
 
 .reco-divider {
@@ -979,7 +991,7 @@ button {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 
 .reco-card {
@@ -1112,42 +1124,62 @@ button {
   transform: scale(1);
 }
 
-/* Spinner clásico de rayitas radiales (como el de iOS): 12 barras grises fijas
-   por las que va "pasando" el azul una por una, en loop. */
+/* Ícono de "Viaje más viable" (auto_awesome) como loader: sus 3 estrellitas
+   titilan de forma independiente, cada una apareciendo/desapareciendo en su
+   propio tiempo, para que se sienta como una animación viva y no un giro mecánico. */
 
-.loader-spinner {
-  position: relative;
+.loader-sparkle {
+  display: block;
   width: 44px;
   height: 44px;
+  margin: 0 auto;
+  color: var(--blue);
+  filter: none;
 }
 
-.loader-spinner-bar {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 3px;
-  height: 10px;
-  margin: -13px 0 0 -1.5px;
-  border-radius: 1.5px;
-  background: var(--grey-inactive);
-  transform: rotate(calc(var(--i) * 30deg)) translateY(-12px);
-  animation: loader-spinner-fade 1.8s ease-out infinite;
-  animation-delay: calc(var(--i) * 0.15s);
+.loader-sparkle-star {
+  opacity: 0;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: loader-sparkle-twinkle 2.4s ease-in-out infinite;
 }
 
-@keyframes loader-spinner-fade {
-  0% { background: var(--blue); }
-  25% { background: var(--grey-inactive); }
-  100% { background: var(--grey-inactive); }
+/* Ventanas de "encendido" sin solaparse entre sí (cada una un tercio del
+   ciclo): así ninguna estrella se cruza en pantalla con otra a la vez, que
+   por transparencia superpuesta se veía como una sombra detrás del ícono. */
+.loader-sparkle-star-1 {
+  animation-delay: 0s;
+}
+
+.loader-sparkle-star-2 {
+  animation-delay: 0.8s;
+}
+
+.loader-sparkle-star-3 {
+  animation-delay: 1.6s;
+}
+
+@keyframes loader-sparkle-twinkle {
+  0%, 34%, 100% { opacity: 0; transform: scale(0.5); }
+  17% { opacity: 1; transform: scale(1); }
 }
 
 .loader-text {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 21px;
+  font-size: 19px;
   letter-spacing: 0.1px;
   line-height: 1.5;
   color: var(--grey-03);
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+/* Aparece recién medio segundo después de que arrancan a brillar las
+   estrellitas, con un fade largo y suave para que se sienta sutil. */
+.loader-overlay.show .loader-text {
+  opacity: 1;
+  transition-delay: 0.5s;
 }
 
 /* ===== Pantalla: Detalle del viaje ("Me interesa") ===== */
@@ -1181,15 +1213,22 @@ button {
   background: var(--white);
   border-radius: 10px;
   box-shadow: var(--shadow-light);
-  padding: 16px 18px 20px;
+  padding: 18px 18px 20px;
   margin-bottom: 20px;
 }
 
 .price-row {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 14px;
+}
+
+.price-current-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
 }
 
 .price-current {
@@ -1197,6 +1236,32 @@ button {
   font-weight: 500;
   font-size: 16px;
   color: var(--blue);
+}
+
+.price-max-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+/* Aclaran qué es cada número (el costo elegido vs. el presupuesto que
+   ingresaste al buscar) con la tipografía más chica que se usa en esta
+   pantalla (la misma de "ACTIVIDADES") y la misma letter-spacing que ya
+   usamos ahí — sin inventar un espaciado nuevo. */
+.price-current-label,
+.price-max-label {
+  font-family: var(--font-rounded);
+  font-size: 9px;
+  letter-spacing: 0.8px;
+}
+
+.price-current-label {
+  color: var(--blue);
+}
+
+.price-max-label {
+  color: var(--grey-01);
 }
 
 .price-max {
@@ -1242,18 +1307,46 @@ button {
   margin-bottom: 14px;
 }
 
+/* Al refrescar vuelo/alojamiento, la card con la info nueva "entra" con un
+   disolve. */
+.esencial-card-refresh {
+  animation: esencial-card-refresh-in 2s ease;
+}
+
+@keyframes esencial-card-refresh-in {
+  from {
+    opacity: 0.2;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* El círculo azul y la sombra son CSS (no parte del SVG): antes venían
+   "horneados" en el ícono junto con un filtro de blur para la sombra, que en
+   algunos celulares se veía pixelado/de baja calidad al escalarlo. Así el
+   círculo queda nítido siempre, y al girar (.spinning) rota solo el ícono de
+   las flechitas de adentro — el círculo y su sombra quedan quietos. */
 .esencial-refresh {
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 24px;
-  height: 24px;
+  width: 15px;
+  height: 15px;
   z-index: 2;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: var(--shadow-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .esencial-refresh img {
-  width: 100%;
-  height: 100%;
+  width: 8.75px;
+  height: auto;
   transition: transform 0.4s ease;
 }
 

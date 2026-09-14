@@ -47,6 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  // Alternativas de hotel acordes a la categoría del destino (ver data.js),
+  // para que la foto siempre pegue con el tipo de lugar.
+  const hotelPool = HOTEL_ALT_POOL_BY_CATEGORIA[trip.fotoCategoria] || HOTEL_ALT_POOL_BY_CATEGORIA.ciudad;
+
   if (!trip.alojamiento.desayuno) {
     document.getElementById('detalle-aloj-desayuno').hidden = true;
   }
@@ -143,20 +147,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderHotel() {
-    const alt = HOTEL_ALT_POOL[hotelAltIndex];
+    const alt = hotelPool[hotelAltIndex];
     const nombre = alt.nombre || trip.alojamiento.nombre;
     const habitacion = alt.habitacion || trip.alojamiento.habitacion;
     const distancia = alt.distancia || trip.alojamiento.distancia;
+    // La opción "original" (alt.nombre null) es el hotel real del viaje: si
+    // tiene una foto propia (trip.alojamiento.imagen) se usa esa en vez de la
+    // genérica de la categoría, para que la foto sea del hotel que se nombra.
+    const imagen = (!alt.nombre && trip.alojamiento.imagen) || alt.imagen;
 
     document.getElementById('hotel-nombre').textContent = nombre;
     document.getElementById('hotel-habitacion').textContent = `${habitacion} · ${trip.alojamiento.capacidad}`;
     document.getElementById('hotel-distancia').textContent = distancia;
-    document.getElementById('hotel-photo-img').src = alt.imagen;
+    document.getElementById('hotel-photo-img').src = imagen;
     document.getElementById('hotel-photo-img').alt = nombre;
   }
 
   function updatePriceBar() {
-    const split = splitCosts(costoBase, FLIGHT_ALT_POOL[flightAltIndex].mult, HOTEL_ALT_POOL[hotelAltIndex].mult);
+    const split = splitCosts(costoBase, FLIGHT_ALT_POOL[flightAltIndex].mult, hotelPool[hotelAltIndex].mult);
 
     idaBtn.querySelector('.price-pill-amount').textContent = formatCurrency(split.idaPrecio);
     vueltaBtn.querySelector('.price-pill-amount').textContent = formatCurrency(split.vueltaPrecio);
@@ -185,11 +193,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function refreshButton(btnId, onRefresh) {
     const btn = document.getElementById(btnId);
+    const card = btn.closest('.esencial-card');
     btn.addEventListener('click', () => {
       onRefresh();
       btn.classList.remove('spinning');
-      void btn.offsetWidth; // reinicia la animación si se toca varias veces seguidas
+      card.classList.remove('esencial-card-refresh');
+      void btn.offsetWidth; // reinicia las animaciones si se toca varias veces seguidas
       btn.classList.add('spinning');
+      card.classList.add('esencial-card-refresh');
       updatePriceBar();
     });
   }
@@ -197,13 +208,15 @@ document.addEventListener('DOMContentLoaded', () => {
   refreshButton('refresh-vuelo', () => {
     flightAltIndex = (flightAltIndex + 1) % FLIGHT_ALT_POOL.length;
     renderVuelo();
-    showToast('Buscamos otra opción de vuelo con un costo similar');
+    // La nueva opción entra sin confirmar: el usuario la vuelve a tildar si la quiere.
+    idaBtn.classList.remove('selected');
+    vueltaBtn.classList.remove('selected');
   });
 
   refreshButton('refresh-hotel', () => {
-    hotelAltIndex = (hotelAltIndex + 1) % HOTEL_ALT_POOL.length;
+    hotelAltIndex = (hotelAltIndex + 1) % hotelPool.length;
     renderHotel();
-    showToast('Buscamos otro alojamiento con un costo similar');
+    hotelBtn.classList.remove('selected');
   });
 
   // ---------- Actividades (seleccionables) ----------

@@ -24,8 +24,14 @@
 
       <div class="price-card">
         <div class="price-row">
-          <span class="price-current" id="price-current">$0</span>
-          <span class="price-max" id="price-max">$0</span>
+          <div class="price-current-group">
+            <span class="price-current-label">COSTO TOTAL</span>
+            <span class="price-current" id="price-current">$0</span>
+          </div>
+          <div class="price-max-group">
+            <span class="price-max-label">TU PRESUPUESTO</span>
+            <span class="price-max" id="price-max">$0</span>
+          </div>
         </div>
         <div class="price-track">
           <div class="price-fill" id="price-fill"></div>
@@ -42,7 +48,7 @@
 
     <div class="esencial-card">
       <button type="button" class="esencial-refresh" id="refresh-vuelo" aria-label="Cambiar opción de vuelo">
-        <img src="assets/icons/refresh.svg" alt="">
+        <img src="assets/icons/refresh-arrows.svg" alt="">
       </button>
 
       <div class="esencial-row" id="row-ida">
@@ -86,7 +92,7 @@
 
     <div class="esencial-card">
       <button type="button" class="esencial-refresh" id="refresh-hotel" aria-label="Cambiar alojamiento">
-        <img src="assets/icons/refresh.svg" alt="">
+        <img src="assets/icons/refresh-arrows.svg" alt="">
       </button>
 
       <div class="esencial-row" id="row-hotel">

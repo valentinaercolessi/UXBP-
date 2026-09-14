@@ -102,29 +102,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const count = slides.length;
-  const VISIBLE_RANGE = 2; // frente + 2 vecinas de cada lado, como en el diseño
-  // El achique entre frente→vecina inmediata y vecina inmediata→lejana es el
-  // mismo paso (0.75 y 0.50, a 0.25 cada uno) y el desplazamiento de la
-  // lejana está calculado para que, sumado a su tamaño ya reducido, su borde
-  // quede siempre dentro del ancho de pantalla más angosto que soportamos
-  // (~360px) — así ninguna se corta con el borde, solo "se hunden" hacia atrás.
-  const STEP_X_NEAR = 80; // desplazamiento de la vecina inmediata (offset 1)
-  const STEP_X_FAR = 105; // desplazamiento de la vecina lejana (offset 2)
-  const SCALE_NEAR = 0.75; // achique de la vecina inmediata
-  const SCALE_FAR = 0.5; // achique de la vecina lejana
+  // Solo el frente + 1 vecina de cada lado: mostrar una segunda hilera más
+  // atrás (más opacidades superpuestas) quedaba raro, así que directamente
+  // no se renderiza ninguna otra carta más allá de la vecina inmediata.
+  const VISIBLE_RANGE = 1; // frente + 1 vecina de cada lado
+  const STEP_X_NEAR = 80; // desplazamiento de la vecina
+  const SCALE_NEAR = 0.75; // achique de la vecina
   let position = 0; // índice "de frente" (puede ser fraccional mientras se arrastra)
 
   function scaleForOffset(absOffset) {
     const a = Math.min(absOffset, VISIBLE_RANGE);
-    if (a <= 1) return 1 - a * (1 - SCALE_NEAR);
-    return SCALE_NEAR - (a - 1) * (SCALE_NEAR - SCALE_FAR);
+    return 1 - a * (1 - SCALE_NEAR);
   }
 
   function translateXForOffset(offset) {
     const sign = offset < 0 ? -1 : 1;
     const a = Math.min(Math.abs(offset), VISIBLE_RANGE);
-    const dx = a <= 1 ? a * STEP_X_NEAR : STEP_X_NEAR + (a - 1) * (STEP_X_FAR - STEP_X_NEAR);
-    return sign * dx;
+    return sign * a * STEP_X_NEAR;
   }
 
   // Distancia circular con signo más corta entre la carta i y la posición actual
