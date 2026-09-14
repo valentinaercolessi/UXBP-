@@ -848,16 +848,18 @@ button {
    medidas tomadas 1:1 del diseño de Figma (el frame del diseño mide 402px,
    igual que nuestro ancho de app). Es el único bloque que cede espacio: en
    pantallas bajas su altura se achica (flex-shrink) y .carousel-ring escala
-   todo el contenido (fotos, offsets, badges) en la misma proporción vía
-   container query units, para que se achique de forma pareja en vez de
-   recortarse. En pantallas con espacio de sobra queda en su tamaño 1:1. */
+   todo el contenido (fotos, offsets, badges) en la misma proporción, para que
+   se achique de forma pareja en vez de recortarse. El factor de escala lo
+   calcula recomendado.js midiendo la altura real del carrusel (--carousel-scale)
+   — no usamos container query units acá porque en algunos navegadores de
+   celular no se aplican a tiempo y las fotos quedaban recortadas arriba/abajo.
+   En pantallas con espacio de sobra queda en su tamaño 1:1. */
 
 .carousel {
   position: relative;
-  container-type: size;
   flex: 1 1 406px;
   max-height: 406px;
-  min-height: 200px;
+  min-height: 160px;
   margin: 0 -16px 20px;
   overflow: hidden;
   touch-action: pan-y;
@@ -876,7 +878,7 @@ button {
   left: 50%;
   width: 0;
   height: 0;
-  transform: scale(calc(100cqh / 406));
+  transform: scale(var(--carousel-scale, 1));
 }
 
 .carousel-slide {
@@ -1422,13 +1424,22 @@ button {
   gap: 6px;
   padding: 0 18px;
   margin-bottom: 12px;
+  font-size: 9px;
 }
 
 .shared-header span {
   font-family: var(--font-rounded);
-  font-size: 9px;
   letter-spacing: 0.8px;
   color: var(--grey-02);
+}
+
+/* Alto = 1em del propio .shared-header (9px), para seguir el tamaño del
+   texto de al lado; el ancho queda "auto" para no deformar la proporción
+   real del ícono. */
+.shared-header-icon {
+  height: 1em;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .shared-scroll {

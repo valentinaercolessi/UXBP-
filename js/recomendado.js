@@ -61,6 +61,21 @@ document.addEventListener('DOMContentLoaded', () => {
   ring.className = 'carousel-ring';
   stage.appendChild(ring);
 
+  // El alto de .carousel se achica en pantallas bajas (ver CSS) para que la
+  // pantalla entera entre sin scroll; acá medimos su alto real y escalamos
+  // .carousel-ring en la misma proporción, para que las fotos se achiquen
+  // parejo en vez de quedar recortadas por el overflow:hidden. Se mide con
+  // JS (no container query units) porque en algún navegador de celular no
+  // llegaban a aplicarse a tiempo y el feed se veía cortado arriba/abajo.
+  const CAROUSEL_DESIGN_HEIGHT = 406;
+  const carouselResizeObserver = new ResizeObserver((entries) => {
+    const height = entries[0].contentRect.height;
+    if (height <= 0) return;
+    const scale = Math.min(1, height / CAROUSEL_DESIGN_HEIGHT);
+    stage.style.setProperty('--carousel-scale', scale);
+  });
+  carouselResizeObserver.observe(stage);
+
   const feed = getFeedForTrip(trip);
   const slides = feed.map((photo) => {
     const slide = document.createElement('div');
@@ -88,10 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const count = slides.length;
   const VISIBLE_RANGE = 2; // frente + 2 vecinas de cada lado, como en el diseño
-  const STEP_X_NEAR = 91.5; // desplazamiento de la vecina inmediata (offset 1)
-  const STEP_X_FAR = 162; // desplazamiento de la vecina lejana (offset 2)
-  const SCALE_NEAR = 0.81; // achique de la vecina inmediata
-  const SCALE_FAR = 0.69; // achique de la vecina lejana
+  // El achique entre frente→vecina inmediata y vecina inmediata→lejana es el
+  // mismo paso (0.75 y 0.50, a 0.25 cada uno) y el desplazamiento de la
+  // lejana está calculado para que, sumado a su tamaño ya reducido, su borde
+  // quede siempre dentro del ancho de pantalla más angosto que soportamos
+  // (~360px) — así ninguna se corta con el borde, solo "se hunden" hacia atrás.
+  const STEP_X_NEAR = 80; // desplazamiento de la vecina inmediata (offset 1)
+  const STEP_X_FAR = 105; // desplazamiento de la vecina lejana (offset 2)
+  const SCALE_NEAR = 0.75; // achique de la vecina inmediata
+  const SCALE_FAR = 0.5; // achique de la vecina lejana
   let position = 0; // índice "de frente" (puede ser fraccional mientras se arrastra)
 
   function scaleForOffset(absOffset) {
@@ -131,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const translateX = translateXForOffset(offset);
       const scale = scaleForOffset(absOffset);
       slide.style.transform = `translateX(${translateX}px) scale(${scale})`;
-      slide.style.opacity = visible ? String(1 - absOffset * 0.3) : '0';
+      slide.style.opacity = visible ? String(1 - absOffset * 0.35) : '0';
       slide.style.filter = `brightness(${1 - Math.min(absOffset, VISIBLE_RANGE) * 0.35})`;
       slide.style.zIndex = String(Math.round((1 - absOffset) * 100));
       slide.style.pointerEvents = visible ? 'auto' : 'none';
