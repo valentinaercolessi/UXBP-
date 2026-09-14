@@ -47,26 +47,40 @@
 
       <div class="esencial-row" id="row-ida">
         <div class="esencial-label">
-          <img src="assets/icons/plane-group1.svg" class="esencial-icon" alt="">
+          <img src="assets/icons/plane-group1.svg" class="esencial-icon esencial-icon-ida" alt="">
           <span>VUELO DE IDA</span>
         </div>
         <p class="esencial-title" id="ida-fecha">—</p>
         <p class="esencial-sub" id="ida-aerolinea">—</p>
-        <p class="esencial-detail" id="ida-ruta">—</p>
-        <button type="button" class="price-pill price-pill-fixed selected" id="ida-precio">$0</button>
+        <div class="esencial-detail-row">
+          <p class="esencial-detail" id="ida-ruta">—</p>
+          <img src="assets/icons/icons-briefcase.svg" class="esencial-extra-icon" alt="Equipaje de mano">
+        </div>
+        <button type="button" class="price-pill price-pill-fixed selected" id="ida-precio">
+          <svg class="price-pill-icon price-pill-icon-check" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L9.5 17L19 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="price-pill-icon price-pill-icon-plus" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          <span class="price-pill-amount">$0</span>
+        </button>
       </div>
 
       <hr class="esencial-sep">
 
       <div class="esencial-row" id="row-vuelta">
         <div class="esencial-label">
-          <img src="assets/icons/plane-group1.svg" class="esencial-icon esencial-icon-flip" alt="">
+          <img src="assets/icons/plane-group1.svg" class="esencial-icon esencial-icon-vuelta" alt="">
           <span>VUELO DE VUELTA</span>
         </div>
         <p class="esencial-title" id="vuelta-fecha">—</p>
         <p class="esencial-sub" id="vuelta-aerolinea">—</p>
-        <p class="esencial-detail" id="vuelta-ruta">—</p>
-        <button type="button" class="price-pill price-pill-fixed selected" id="vuelta-precio">$0</button>
+        <div class="esencial-detail-row">
+          <p class="esencial-detail" id="vuelta-ruta">—</p>
+          <img src="assets/icons/icons-briefcase.svg" class="esencial-extra-icon" alt="Equipaje de mano">
+        </div>
+        <button type="button" class="price-pill price-pill-fixed selected" id="vuelta-precio">
+          <svg class="price-pill-icon price-pill-icon-check" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L9.5 17L19 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="price-pill-icon price-pill-icon-plus" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          <span class="price-pill-amount">$0</span>
+        </button>
       </div>
     </div>
 
@@ -82,8 +96,15 @@
         </div>
         <p class="esencial-title" id="hotel-nombre">—</p>
         <p class="esencial-sub" id="hotel-habitacion">—</p>
-        <p class="esencial-detail" id="hotel-distancia">—</p>
-        <button type="button" class="price-pill price-pill-fixed selected" id="hotel-precio">$0</button>
+        <div class="esencial-detail-row">
+          <p class="esencial-detail" id="hotel-distancia">—</p>
+          <img src="assets/icons/local-cafe.svg" class="esencial-extra-icon" id="detalle-aloj-desayuno" alt="Desayuno incluido">
+        </div>
+        <button type="button" class="price-pill price-pill-fixed selected" id="hotel-precio">
+          <svg class="price-pill-icon price-pill-icon-check" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L9.5 17L19 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="price-pill-icon price-pill-icon-plus" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          <span class="price-pill-amount">$0</span>
+        </button>
       </div>
 
       <div class="esencial-photo">
@@ -95,16 +116,10 @@
 
     <div class="shared-card">
       <div class="shared-header">
+        <img src="assets/icons/trending-up.svg" class="esencial-icon" alt="">
         <span>ACTIVIDADES</span>
       </div>
       <div class="shared-scroll" id="actividades-scroll"></div>
-    </div>
-
-    <div class="shared-card">
-      <div class="shared-header">
-        <span>GASTRONOMÍA</span>
-      </div>
-      <div class="shared-scroll" id="gastronomia-scroll"></div>
     </div>
 
   </main>

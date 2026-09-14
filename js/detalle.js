@@ -1,3 +1,24 @@
+// Evalúa la misma curva cubic-bezier(x1,y1,x2,y2) que usa CSS, para poder
+// animar un valor por JS (requestAnimationFrame) exactamente a la par de una
+// transición CSS que use esa curva.
+function cubicBezierEasing(x1, y1, x2, y2) {
+  const A = (a1, a2) => 1 - 3 * a2 + 3 * a1;
+  const B = (a1, a2) => 3 * a2 - 6 * a1;
+  const C = (a1) => 3 * a1;
+  const calcBezier = (t, a1, a2) => ((A(a1, a2) * t + B(a1, a2)) * t + C(a1)) * t;
+  const getSlope = (t, a1, a2) => 3 * A(a1, a2) * t * t + 2 * B(a1, a2) * t + C(a1);
+  function getTForX(x) {
+    let t = x;
+    for (let i = 0; i < 6; i++) {
+      const slope = getSlope(t, x1, x2);
+      if (slope === 0) return t;
+      t -= (calcBezier(t, x1, x2) - x) / slope;
+    }
+    return t;
+  }
+  return (x) => calcBezier(getTForX(x), y1, y2);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const raw = sessionStorage.getItem('viajeBusqueda');
   if (!raw) {
@@ -26,6 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  if (!trip.alojamiento.desayuno) {
+    document.getElementById('detalle-aloj-desayuno').hidden = true;
+  }
+
   const inicio = new Date(data.inicio);
   const fin = new Date(data.fin);
   const dias = Math.max(1, Math.round((fin - inicio) / 86400000) + 1);
@@ -42,7 +67,48 @@ document.addEventListener('DOMContentLoaded', () => {
   let flightAltIndex = 0;
   let hotelAltIndex = 0;
   let currentTotal = 0;
+  let displayedTotal = 0; // valor mostrado en pantalla, va "alcanzando" a currentTotal animado
+  let priceAnimFrame = null;
+  let priceRendered = false; // recién al primer render el número ya aparece puesto, sin animar
   const selectedExtras = new Map(); // id -> precio
+
+  // Debe ir exactamente a la par de la barra (.price-fill en el CSS): misma
+  // duración y misma curva (cubic-bezier(0.22, 0.61, 0.36, 1)), para que el
+  // número nunca siga contando después de que la barra ya se detuvo.
+  const PRICE_BAR_DURATION = 900;
+  const priceEase = cubicBezierEasing(0.22, 0.61, 0.36, 1);
+
+  // Anima el número del precio actual contando hasta el nuevo total, en vez de
+  // saltar de golpe, para que se sienta como que recalcula en vez de algo
+  // instantáneo/automático (va de la mano con la barra, que también tarda).
+  // La primera vez (al entrar a la pantalla) no anima: el precio ya está ahí.
+  function animatePriceCurrent(to) {
+    const el = document.getElementById('price-current');
+    const from = displayedTotal;
+    if (priceAnimFrame) cancelAnimationFrame(priceAnimFrame);
+    if (from === to || !priceRendered) {
+      priceRendered = true;
+      displayedTotal = to;
+      el.textContent = formatCurrency(to);
+      return;
+    }
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min(1, (now - start) / PRICE_BAR_DURATION);
+      const eased = priceEase(t);
+      // Se guarda en cada frame (no solo al terminar) para que, si esta
+      // animación se corta por otro cambio antes de llegar a destino, la
+      // próxima arranque desde el valor real en pantalla y no desde uno viejo.
+      displayedTotal = Math.round(from + (to - from) * eased);
+      el.textContent = formatCurrency(displayedTotal);
+      if (t < 1) {
+        priceAnimFrame = requestAnimationFrame(tick);
+      } else {
+        priceAnimFrame = null;
+      }
+    }
+    priceAnimFrame = requestAnimationFrame(tick);
+  }
 
   // Vuelo y alojamiento vienen seleccionados por defecto (son "lo esencial"),
   // pero se pueden destildar tocando su precio, igual que las actividades.
@@ -58,10 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const actividades = getActividadesForTrip(trip);
-  const gastronomia = getGastronomiaForTrip(trip);
   const maxTotal = costoBase
-    + actividades.reduce((sum, a) => sum + a.precio, 0)
-    + gastronomia.reduce((sum, g) => sum + g.precio, 0);
+    + actividades.reduce((sum, a) => sum + a.precio, 0);
 
   // ---------- Render: Vuelo / Alojamiento ----------
 
@@ -94,9 +158,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function updatePriceBar() {
     const split = splitCosts(costoBase, FLIGHT_ALT_POOL[flightAltIndex].mult, HOTEL_ALT_POOL[hotelAltIndex].mult);
 
-    idaBtn.textContent = formatCurrency(split.idaPrecio);
-    vueltaBtn.textContent = formatCurrency(split.vueltaPrecio);
-    hotelBtn.textContent = formatCurrency(split.hotelTotal);
+    idaBtn.querySelector('.price-pill-amount').textContent = formatCurrency(split.idaPrecio);
+    vueltaBtn.querySelector('.price-pill-amount').textContent = formatCurrency(split.vueltaPrecio);
+    hotelBtn.querySelector('.price-pill-amount').textContent = formatCurrency(split.hotelTotal);
 
     let extrasTotal = 0;
     selectedExtras.forEach((precio) => { extrasTotal += precio; });
@@ -108,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentTotal = idaTotal + vueltaTotal + hotelTotal + extrasTotal;
     const percent = Math.min(100, (currentTotal / maxTotal) * 100);
 
-    document.getElementById('price-current').textContent = formatCurrency(currentTotal);
+    animatePriceCurrent(currentTotal);
     document.getElementById('price-max').textContent = formatCurrency(maxTotal);
     document.getElementById('price-fill').style.width = `${percent}%`;
   }
@@ -142,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Buscamos otro alojamiento con un costo similar');
   });
 
-  // ---------- Actividades / Gastronomía (seleccionables) ----------
+  // ---------- Actividades (seleccionables) ----------
 
   function renderSharedItems(containerId, items) {
     const container = document.getElementById(containerId);
@@ -154,7 +218,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${item.imagen}" alt="${item.nombre}">
         </div>
         <p class="shared-item-name">${item.nombre}</p>
-        <button type="button" class="price-pill">${formatCurrency(item.precio)}</button>
+        <button type="button" class="price-pill">
+          <svg class="price-pill-icon price-pill-icon-check" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L9.5 17L19 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="price-pill-icon price-pill-icon-plus" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          <span class="price-pill-amount">${formatCurrency(item.precio)}</span>
+        </button>
       `;
       const pill = el.querySelector('.price-pill');
       pill.addEventListener('click', () => {
@@ -171,7 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   renderSharedItems('actividades-scroll', actividades);
-  renderSharedItems('gastronomia-scroll', gastronomia);
 
   // ---------- Botones de navegación ----------
 
@@ -216,17 +283,21 @@ document.addEventListener('DOMContentLoaded', () => {
       savedOverlay.classList.add('open');
     });
 
-    // Secuencia: 1) sube el fondo/tarjeta, 2) el tilde arranca a dibujarse
-    // a la vez que aparece el texto, 3) por último aparecen los botones.
+    // Secuencia: 1) sube el fondo/tarjeta, 2) el tilde arranca a dibujarse,
+    // 3) recién cuando termina de dibujarse aparece el texto, 4) por
+    // último aparecen los botones.
     setTimeout(() => {
       savedCheck.classList.add('show');
-      savedTitle.classList.add('show');
       drawSavedCheck();
     }, 550);
 
     setTimeout(() => {
-      savedButtons.forEach((btn) => btn.classList.add('show'));
+      savedTitle.classList.add('show');
     }, 1550);
+
+    setTimeout(() => {
+      savedButtons.forEach((btn) => btn.classList.add('show'));
+    }, 1950);
   }
 
   function closeSavedOverlay() {

@@ -186,8 +186,11 @@ button {
   background: rgba(0, 47, 166, 0.06);
 }
 
+/* brightness(0) satura(100%) colapsa el ícono (sea cual sea su color de
+   origen) a negro puro; la cadena siguiente está calculada para llevar
+   ese negro exactamente a var(--blue) #002fa6, siempre el mismo tono. */
 .chip.active .chip-icon {
-  filter: invert(13%) sepia(84%) saturate(4747%) hue-rotate(217deg) brightness(83%) contrast(107%);
+  filter: brightness(0) saturate(100%) invert(25%) sepia(94%) saturate(390%) hue-rotate(185deg) brightness(105%) contrast(171%);
 }
 
 .chip-plus {
@@ -1126,8 +1129,8 @@ button {
   border-radius: 1.5px;
   background: var(--grey-inactive);
   transform: rotate(calc(var(--i) * 30deg)) translateY(-12px);
-  animation: loader-spinner-fade 2.4s linear infinite;
-  animation-delay: calc(var(--i) * 0.2s);
+  animation: loader-spinner-fade 1.8s ease-out infinite;
+  animation-delay: calc(var(--i) * 0.15s);
 }
 
 @keyframes loader-spinner-fade {
@@ -1139,7 +1142,8 @@ button {
 .loader-text {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 21px;
+  letter-spacing: 0.1px;
   line-height: 1.5;
   color: var(--grey-03);
 }
@@ -1214,7 +1218,7 @@ button {
   width: 0%;
   border-radius: 10px;
   background: var(--blue);
-  transition: width 0.4s ease;
+  transition: width 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .section-subtitle {
@@ -1272,8 +1276,14 @@ button {
   height: 15px;
 }
 
-.esencial-icon-flip {
-  transform: rotate(180deg) scaleY(-1);
+/* El ícono de avión mira hacia arriba por defecto; para ida/vuelta lo
+   ponemos horizontal, apuntando en la dirección de cada tramo. */
+.esencial-icon-ida {
+  transform: rotate(90deg);
+}
+
+.esencial-icon-vuelta {
+  transform: rotate(-90deg);
 }
 
 .esencial-label span {
@@ -1306,6 +1316,18 @@ button {
   color: var(--grey-02);
 }
 
+.esencial-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.esencial-extra-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
 .esencial-sep {
   border: none;
   border-top: 1px solid var(--natural-light);
@@ -1316,17 +1338,18 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   height: 25px;
   padding: 0 12px;
-  border: 0.8px solid var(--blue);
+  border: 0.8px solid var(--grey-02);
   border-radius: 26px;
-  background: var(--white);
-  color: var(--blue);
+  background: transparent;
+  color: var(--grey-02);
   font-family: var(--font-rounded);
   font-size: 10px;
   letter-spacing: 0.5px;
   white-space: nowrap;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 
 .price-pill-fixed {
@@ -1336,9 +1359,35 @@ button {
 }
 
 .price-pill.selected {
-  background: rgba(47, 59, 78, 0.15);
+  border-color: var(--blue);
   color: var(--blue);
   font-weight: 600;
+}
+
+/* Tick cuando está seleccionado, "+" cuando no — el stroke usa currentColor,
+   así que siguen el mismo color que ya tiene el botón (gris/azul) sin
+   filtros aparte. El tamaño está en `em` para seguir el font-size del texto. */
+.price-pill-icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  display: block;
+}
+
+.price-pill-icon-plus {
+  display: block;
+}
+
+.price-pill-icon-check {
+  display: none;
+}
+
+.price-pill.selected .price-pill-icon-plus {
+  display: none;
+}
+
+.price-pill.selected .price-pill-icon-check {
+  display: block;
 }
 
 /* Foto del alojamiento */
@@ -1368,6 +1417,9 @@ button {
 }
 
 .shared-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 0 18px;
   margin-bottom: 12px;
 }
@@ -1443,13 +1495,13 @@ button {
 .saved-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 22, 30, 0);
+  background: rgba(0, 47, 166, 0);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding: 0 16px calc(16px + env(safe-area-inset-bottom));
   z-index: 150;
-  transition: background 0.6s ease;
+  transition: background 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .saved-overlay[hidden] {
@@ -1457,7 +1509,7 @@ button {
 }
 
 .saved-overlay.open {
-  background: rgba(20, 22, 30, 0.45);
+  background: rgba(0, 47, 166, 0.8);
 }
 
 .saved-card {
