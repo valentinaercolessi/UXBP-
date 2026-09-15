@@ -131,6 +131,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const maxTotal = costoBase
     + actividades.reduce((sum, a) => sum + a.precio, 0);
 
+  // Si este viaje viene de "Otras opciones" es, por definición, uno que se
+  // pasa del presupuesto original: "TU PRESUPUESTO" sigue mostrando el
+  // monto que puso al buscar, pero al lado se aclara cuánto se pasa el
+  // total elegido por sobre ese monto (ej. "+$20.000").
+  const mostrarDiferencia = origen === 'otras' && data.presupuesto > 0;
+  const priceMaxExtraEl = document.getElementById('price-max-extra');
+  if (mostrarDiferencia) {
+    document.getElementById('price-max').textContent = formatCurrency(data.presupuesto);
+  }
+
   // ---------- Render: Vuelo / Alojamiento ----------
 
   function renderVuelo() {
@@ -184,7 +194,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const percent = Math.min(100, (currentTotal / maxTotal) * 100);
 
     animatePriceCurrent(currentTotal);
-    document.getElementById('price-max').textContent = formatCurrency(maxTotal);
+    if (mostrarDiferencia) {
+      const extra = Math.max(0, currentTotal - data.presupuesto);
+      priceMaxExtraEl.hidden = extra === 0;
+      priceMaxExtraEl.textContent = `+${formatCurrency(extra)}`;
+    } else {
+      document.getElementById('price-max').textContent = formatCurrency(maxTotal);
+    }
     document.getElementById('price-fill').style.width = `${percent}%`;
   }
 

@@ -269,11 +269,12 @@ function buscarViajes({ presupuesto, inicio, fin, intereses, texto }) {
 
 // "Otras opciones": viajes que NO son totalmente viables (no pasan buscarViajes)
 // pero están cerca de serlo — le piden algo de flexibilidad al usuario porque se
-// pasan del presupuesto por hasta $100.000, o porque sus fechas disponibles no
+// pasan del presupuesto por hasta $200.000, o porque sus fechas disponibles no
 // coinciden con las pedidas. Si encajaran en todo ya serían viables, no "otras
-// opciones". Un viaje que se pasa del presupuesto por más de $100.000 queda
-// afuera igual: ya no es "cercano".
-const FLEXIBILIDAD_PRESUPUESTO_MAX = 100000;
+// opciones". Un viaje que se pasa del presupuesto por más de $200.000 queda
+// afuera igual: ya no es "cercano" (mismo margen que se usa para elegir el
+// viaje más viable, ver MARGEN_PRESUPUESTO_IDEAL).
+const FLEXIBILIDAD_PRESUPUESTO_MAX = 200000;
 
 function buscarOtrasOpciones({ presupuesto, inicio, fin, intereses, texto }) {
   return TRIPS.filter((trip) => {

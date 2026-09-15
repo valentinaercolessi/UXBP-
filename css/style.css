@@ -1312,6 +1312,22 @@ button {
   color: #bfbfbf;
 }
 
+.price-max-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+/* Cuánto se pasa el total elegido por sobre el presupuesto que puso al
+   buscar (solo aparece en viajes de "Otras opciones", que por definición
+   se pasan de ese monto). */
+.price-max-extra {
+  font-family: var(--font-rounded);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--blue);
+}
+
 .price-track {
   position: relative;
   height: 8px;
