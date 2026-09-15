@@ -214,8 +214,8 @@ button {
   gap: 6px;
   width: 100%;
   height: 44px;
-  border: 1.8px solid var(--blue);
-  background: var(--white);
+  border: 1.3px solid var(--blue);
+  background: rgba(0, 47, 166, 0.15);
   color: var(--blue);
   border-radius: 39px;
   box-shadow: var(--shadow-light);
@@ -1802,7 +1802,8 @@ button {
 }
 
 .saved-btn-primary {
-  border: 1.8px solid var(--blue);
+  border: 1.3px solid var(--blue);
+  background: rgba(0, 47, 166, 0.15);
   color: var(--blue);
 }
 
@@ -2021,9 +2022,9 @@ button {
   width: 100%;
   height: 38px;
   margin-top: 6px;
-  border: 1.8px solid var(--blue);
+  border: 1.3px solid var(--blue);
   border-radius: 39px;
-  background: var(--white);
+  background: rgba(0, 47, 166, 0.15);
   box-shadow: var(--shadow-light);
   color: var(--blue);
   font-family: var(--font-display);
@@ -2208,9 +2209,9 @@ button {
   width: 100%;
   height: 38px;
   margin-top: 12px;
-  border: 1.8px solid var(--blue);
+  border: 1.3px solid var(--blue);
   border-radius: 39px;
-  background: var(--white);
+  background: rgba(0, 47, 166, 0.15);
   box-shadow: var(--shadow-light);
   color: var(--blue);
   font-family: var(--font-display);
