@@ -214,8 +214,9 @@ button {
   gap: 6px;
   width: 100%;
   height: 44px;
-  background: var(--blue);
-  color: var(--white);
+  border: 1.8px solid var(--blue);
+  background: var(--white);
+  color: var(--blue);
   border-radius: 39px;
   box-shadow: var(--shadow-light);
   font-family: var(--font-display);
@@ -223,6 +224,15 @@ button {
   font-weight: 500;
   letter-spacing: 0.1px;
   margin-bottom: 24px;
+}
+
+/* Los dos únicos CTA que se quedan con el relleno azul sólido: "Viaje a
+   medida" y "Guardar viaje". El resto de los cta-button pasan a borde azul
+   con relleno blanco, como el "Ver más" de Otras opciones. */
+.cta-button-solid {
+  border: none;
+  background: var(--blue);
+  color: var(--white);
 }
 
 .cta-icon {
@@ -1115,7 +1125,9 @@ button {
 }
 
 .reco-btn-otras {
-  background: var(--grey-inactive);
+  border: 1.8px solid var(--grey-01);
+  background: transparent;
+  color: var(--grey-02);
 }
 
 /* Loader: buscando el viaje más viable */
@@ -1790,7 +1802,7 @@ button {
 }
 
 .saved-btn-primary {
-  border: 0.8px solid var(--blue);
+  border: 1.8px solid var(--blue);
   color: var(--blue);
 }
 
@@ -2009,7 +2021,7 @@ button {
   width: 100%;
   height: 38px;
   margin-top: 6px;
-  border: 0.8px solid var(--blue);
+  border: 1.8px solid var(--blue);
   border-radius: 39px;
   background: var(--white);
   box-shadow: var(--shadow-light);
@@ -2196,7 +2208,7 @@ button {
   width: 100%;
   height: 38px;
   margin-top: 12px;
-  border: 0.8px solid var(--blue);
+  border: 1.8px solid var(--blue);
   border-radius: 39px;
   background: var(--white);
   box-shadow: var(--shadow-light);
