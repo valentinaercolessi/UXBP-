@@ -113,14 +113,17 @@ document.addEventListener('DOMContentLoaded', () => {
     return val === 0 ? 'Sin definir' : formatCurrency(val);
   }
 
-  function updateBudgetUI() {
+  function updateBudgetUI({ skipDisplay = false } = {}) {
     const min = Number(budgetSlider.min);
     const max = Number(budgetSlider.max);
     const val = Number(budgetSlider.value);
     const percent = ((val - min) / (max - min)) * 100;
     budgetSlider.style.background =
       `linear-gradient(to right, var(--grey-inactive) 0%, var(--grey-inactive) ${percent}%, var(--natural-light) ${percent}%, var(--natural-light) 100%)`;
-    budgetValue.textContent = val === 0 ? '$0' : formatCurrency(val);
+    // Mientras se está tipeando el monto a mano no se reformatea en cada
+    // tecla (rompía la escritura en mobile); eso se hace recién al
+    // terminar (blur/Enter).
+    if (!skipDisplay) budgetValue.value = val === 0 ? '$0' : formatCurrency(val);
 
     const superaMinimo = val > PRESUPUESTO_MINIMO_RECOMENDADO;
     budgetValue.classList.toggle('sobre-minimo', superaMinimo);
@@ -147,6 +150,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   budgetSlider.addEventListener('input', updateBudgetUI);
+
+  // También se puede escribir el presupuesto a mano con el teclado, además
+  // de mover el slider. Se limpia todo lo que no sea dígito (soporta pegar
+  // "$1.500.000" tal cual) y se clampea al rango del slider.
+  function parseBudgetInput(raw) {
+    const digits = raw.replace(/\D/g, '');
+    return digits ? Number(digits) : 0;
+  }
+
+  // Al tocar para escribir, si todavía dice "$0" lo dejamos en blanco (solo
+  // el "$") para no tener que borrar el cero a mano antes de tipear.
+  budgetValue.addEventListener('focus', () => {
+    if (budgetValue.value === '$0') budgetValue.value = '$';
+    const end = budgetValue.value.length;
+    budgetValue.setSelectionRange(end, end);
+  });
+
+  budgetValue.addEventListener('input', () => {
+    const min = Number(budgetSlider.min);
+    const max = Number(budgetSlider.max);
+    const val = Math.min(max, Math.max(min, parseBudgetInput(budgetValue.value)));
+    budgetSlider.value = val;
+    updateBudgetUI({ skipDisplay: true });
+  });
+
+  // Recién al salir del campo (o tocar Enter) se reformatea con el "$" y
+  // los puntos de miles.
+  budgetValue.addEventListener('blur', () => updateBudgetUI());
+  budgetValue.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') budgetValue.blur();
+  });
+
   updateBudgetUI();
 
   // Calendario de fechas disponibles
@@ -210,6 +245,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         renderCalendar();
         updateFechasSummary();
+        // Al completar el rango (se tocó la fecha de vuelta), el
+        // desplegable de fechas se cierra solo y pasa a Preferencias, pero
+        // con una pequeña pausa: así da tiempo a ver la fecha ya
+        // seleccionada antes de que la sección cambie, en vez de saltar
+        // instantáneo y sentirse automático.
+        if (rangeStart && rangeEnd) {
+          setTimeout(() => setOpenSection('section-intereses'), 450);
+        }
       });
       calGridEl.appendChild(cell);
     }

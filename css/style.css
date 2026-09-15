@@ -529,6 +529,14 @@ button {
   transition: grid-template-rows 0.3s ease;
 }
 
+/* El calendario es ~4x más alto que el slider de presupuesto: a los mismos
+   0.3s recorre mucha más distancia y se siente más brusco al abrir/cerrar
+   aunque dure lo mismo. Alargamos la transición acá para que la velocidad
+   (no la duración) se sienta pareja con el resto de las solapas. */
+#section-fechas .accordion-body {
+  transition-duration: 1s;
+}
+
 .accordion-section.open .accordion-body {
   grid-template-rows: 1fr;
 }
@@ -549,13 +557,27 @@ button {
 }
 
 .budget-value {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0;
+  appearance: none;
   text-align: center;
   font-family: var(--font-display);
   font-size: 21px;
   color: var(--grey-03);
   letter-spacing: 0.1px;
   margin-bottom: 10px;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, background-color 0.15s ease;
+}
+
+/* Da la pista de que es editable (además del teclado numérico que ya
+   dispara al tocarlo en mobile): un resalte sutil mientras está enfocado. */
+.budget-value:focus {
+  background-color: rgba(0, 47, 166, 0.06);
+  border-radius: 8px;
 }
 
 .budget-value.sobre-minimo {
