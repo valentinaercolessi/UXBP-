@@ -1314,7 +1314,7 @@ button {
 }
 
 .price-max-label {
-  color: #bfbfbf;
+  color: #a8a8a8;
 }
 
 .price-max {
@@ -1324,19 +1324,20 @@ button {
   color: #bfbfbf;
 }
 
-.price-max-row {
+.price-max-label-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 4px;
 }
 
 /* Cuánto se pasa el total elegido por sobre el presupuesto que puso al
    buscar (solo aparece en viajes de "Otras opciones", que por definición
-   se pasan de ese monto). */
+   se pasan de ese monto): mismo tamaño que el label "TU PRESUPUESTO" de al
+   lado, solo que en azul. */
 .price-max-extra {
   font-family: var(--font-rounded);
-  font-weight: 600;
-  font-size: 13px;
+  font-size: 10px;
+  letter-spacing: 0.5px;
   color: var(--blue);
 }
 
@@ -2209,11 +2210,11 @@ button {
   width: 100%;
   height: 38px;
   margin-top: 12px;
-  border: 1.3px solid var(--blue);
+  border: 1.8px solid var(--grey-01);
   border-radius: 39px;
-  background: rgba(0, 47, 166, 0.15);
+  background: transparent;
   box-shadow: var(--shadow-light);
-  color: var(--blue);
+  color: var(--grey-02);
   font-family: var(--font-display);
   font-size: 14px;
   font-weight: 500;
