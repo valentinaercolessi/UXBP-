@@ -802,7 +802,7 @@ button {
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  padding-top: 4px;
+  padding-top: 16px;
   /* Ya no hay tabbar en esta pantalla (queda la flecha de volver del header):
      justo lo necesario para no tapar los botones fijos (bottom:16px + su
      alto de 44px) más un margen chico de respiro; el resto de ese espacio
@@ -1233,7 +1233,10 @@ button {
 }
 
 .detalle-sticky-body {
-  padding: 0 16px;
+  /* Mismo aire arriba del título que en Viaje Recomendado (16px de
+     .reco-content + los 8px propios de .reco-destination), para que el
+     nombre del destino quede a la misma altura en ambas pantallas. */
+  padding: 16px 16px 0;
 }
 
 .detalle-content {
