@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.PageInit.explorar = function () {
   // Grupo de chips de filtro reutilizable (home + modal), con botón "+" para agregar uno propio
   function setupChipGroup(containerEl, addBtnEl, onChange) {
     containerEl.querySelectorAll('.chip[data-chip]').forEach((chip) => {
@@ -340,4 +340,4 @@ document.addEventListener('DOMContentLoaded', () => {
       navigateWithFade('viaje-recomendado.html', 150, true);
     }, SEARCH_DELAY);
   });
-});
+};

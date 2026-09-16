@@ -89,32 +89,9 @@ function navigateWithFade(url, extraDelay = 0, slow = false) {
     if (slow) app.classList.add('page-fade-slow');
     app.classList.remove('page-visible');
   }
-  setTimeout(() => { window.location.href = url; }, (slow ? PAGE_FADE_SLOW_MS : PAGE_FADE_MS) + extraDelay);
+  setTimeout(() => { window.routerMount(url); }, (slow ? PAGE_FADE_SLOW_MS : PAGE_FADE_MS) + extraDelay);
 }
 
-(function fadeInOnLoad() {
-  const app = document.querySelector('.app');
-  if (!app) return;
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => app.classList.add('page-visible'));
-  });
-})();
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Tabs sin pantalla todavía (las que todavía apuntan a "#")
-  document.querySelectorAll('.tab:not(.active)[href="#"]').forEach((tab) => {
-    tab.addEventListener('click', (e) => {
-      e.preventDefault();
-      showToast('Pantalla en construcción');
-    });
-  });
-
-  // Tabs con pantalla real: navegación suave con fade en vez de la recarga dura
-  // del navegador, para que el cambio se sienta parte de la misma app.
-  document.querySelectorAll('.tab:not(.active):not([href="#"])').forEach((tab) => {
-    tab.addEventListener('click', (e) => {
-      e.preventDefault();
-      navigateWithFade(tab.getAttribute('href'));
-    });
-  });
-});
+// El fade de entrada y el binding de la tabbar ahora los maneja js/router.js
+// en cada montaje de pantalla (equivalente a lo que antes pasaba una vez por
+// carga de página).

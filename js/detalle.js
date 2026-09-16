@@ -19,10 +19,10 @@ function cubicBezierEasing(x1, y1, x2, y2) {
   return (x) => calcBezier(getTForX(x), y1, y2);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+window.PageInit.detalle = function () {
   const raw = sessionStorage.getItem('viajeBusqueda');
   if (!raw) {
-    window.location.href = 'index.html';
+    setTimeout(() => window.routerMount('index.html'), 0);
     return;
   }
 
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     data = JSON.parse(raw);
   } catch (e) {
-    window.location.href = 'index.html';
+    setTimeout(() => window.routerMount('index.html'), 0);
     return;
   }
 
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const trip = TRIPS.find((t) => t.id === (otrasOpcionesTripId ? Number(otrasOpcionesTripId) : data.tripId));
   if (!trip) {
-    window.location.href = 'index.html';
+    setTimeout(() => window.routerMount('index.html'), 0);
     return;
   }
 
@@ -371,4 +371,4 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('saved-volver-inicio').addEventListener('click', () => {
     navigateWithFade('index.html');
   });
-});
+};

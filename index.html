@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>exploramundo — Explorar</title>
+<title>exploramundo</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="app">
+<div class="app"></div>
+
+<template id="tpl-explorar">
 
   <div class="explorar-sticky">
     <header class="topbar">
@@ -236,10 +238,349 @@
     </div>
   </div>
 
-</div>
+</template>
+
+<template id="tpl-mis-viajes">
+
+  <div class="mv-page">
+    <header class="topbar">
+      <img class="logo" src="assets/icons/logo-exploramundo.svg" alt="exploramundo">
+    </header>
+
+    <h1 class="mv-title">Mis viajes</h1>
+
+    <div class="mv-segmented" role="tablist" aria-label="Filtro de viajes">
+      <button type="button" class="mv-segment" data-segment="activos" role="tab" aria-selected="false">Activos</button>
+      <button type="button" class="mv-segment" data-segment="pasados" role="tab" aria-selected="false">Pasados</button>
+      <button type="button" class="mv-segment active" data-segment="guardados" role="tab" aria-selected="true">Guardados</button>
+    </div>
+
+    <div class="mv-body" id="mv-body">
+      <div class="mv-panel" id="mv-panel-activos" hidden>
+        <p class="mv-empty">Todavía no tenés viajes activos.</p>
+      </div>
+
+      <div class="mv-panel" id="mv-panel-pasados" hidden>
+        <p class="mv-empty">Todavía no tenés viajes pasados.</p>
+      </div>
+
+      <div class="mv-panel" id="mv-panel-guardados">
+        <div id="mv-list-guardados"></div>
+        <p class="mv-empty" id="mv-empty-guardados" hidden>Todavía no guardaste ningún viaje. Cuando encuentres uno que te guste, tocá "Guardar Viaje".</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="tabbar" aria-label="Navegación principal">
+    <a href="index.html" class="tab" data-page="explorar">
+      <img src="assets/icons/icon-explorar-inactive.svg" alt="" class="tab-icon">
+      <span>Inicio</span>
+    </a>
+    <a href="mis-viajes.html" class="tab active" data-page="mis-viajes">
+      <img src="assets/icons/icon-map-active-blue.svg" alt="" class="tab-icon">
+      <span>Mis viajes</span>
+    </a>
+    <a href="#" class="tab" data-page="reservar">
+      <img src="assets/icons/icon-tag.svg" alt="" class="tab-icon">
+      <span>Reservar</span>
+    </a>
+    <a href="#" class="tab" data-page="mi-perfil">
+      <img src="assets/icons/icon-user.svg" alt="" class="tab-icon">
+      <span>Mi perfil</span>
+    </a>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="mv-confirm-overlay" id="mv-confirm-overlay" hidden>
+    <div class="mv-confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="mv-confirm-title">
+      <p class="mv-confirm-title" id="mv-confirm-title">¿Eliminar viaje guardado?</p>
+      <div class="mv-confirm-actions">
+        <button type="button" class="mv-confirm-btn" id="mv-confirm-cancel">Cancelar</button>
+        <button type="button" class="mv-confirm-btn mv-confirm-btn-destructive" id="mv-confirm-delete">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+</template>
+
+<template id="tpl-otras-opciones">
+
+  <div class="oo-page">
+    <header class="reco-header">
+      <button type="button" class="back-btn" id="back-btn" aria-label="Volver">
+        <img src="assets/icons/back-arrow.svg" alt="">
+      </button>
+      <h1 class="reco-header-title">Otras opciones</h1>
+    </header>
+
+    <p class="oo-description" id="oo-description">Los destinos más cercanos al Viaje Recomendado, con flexibilidad en presupuesto y fechas disponibles.</p>
+
+    <div class="oo-body" id="oo-body"></div>
+  </div>
+
+  <nav class="tabbar" aria-label="Navegación principal">
+    <a href="index.html" class="tab active" data-page="explorar">
+      <img src="assets/icons/tabbar-indicator.svg" alt="" class="tab-icon">
+      <span>Inicio</span>
+    </a>
+    <a href="mis-viajes.html" class="tab" data-page="mis-viajes">
+      <img src="assets/icons/icon-map-active.svg" alt="" class="tab-icon">
+      <span>Mis viajes</span>
+    </a>
+    <a href="#" class="tab" data-page="reservar">
+      <img src="assets/icons/icon-tag.svg" alt="" class="tab-icon">
+      <span>Reservar</span>
+    </a>
+    <a href="#" class="tab" data-page="mi-perfil">
+      <img src="assets/icons/icon-user.svg" alt="" class="tab-icon">
+      <span>Mi perfil</span>
+    </a>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+</template>
+
+<template id="tpl-viaje-detalle">
+
+  <div class="detalle-sticky">
+    <header class="reco-header">
+      <button type="button" class="back-btn" id="back-btn" aria-label="Volver">
+        <img src="assets/icons/back-arrow.svg" alt="">
+      </button>
+      <h1 class="reco-header-title">Detalle del viaje</h1>
+    </header>
+
+    <div class="detalle-sticky-body">
+      <h2 class="reco-destination" id="detalle-destination">—</h2>
+
+      <p class="price-label">Anticipá el precio final</p>
+
+      <div class="price-card">
+        <div class="price-row">
+          <div class="price-current-group">
+            <span class="price-current-label">COSTO TOTAL</span>
+            <span class="price-current" id="price-current">$0</span>
+          </div>
+          <div class="price-max-group">
+            <span class="price-max-label-row">
+              <span class="price-max-label">TU PRESUPUESTO</span>
+              <span class="price-max-extra" id="price-max-extra" hidden></span>
+            </span>
+            <span class="price-max" id="price-max">$0</span>
+          </div>
+        </div>
+        <div class="price-track">
+          <div class="price-fill" id="price-fill"></div>
+        </div>
+      </div>
+
+      <hr class="reco-divider">
+    </div>
+  </div>
+
+  <main class="content reco-content detalle-content">
+
+    <h3 class="section-subtitle">Lo esencial</h3>
+
+    <div class="esencial-card">
+      <button type="button" class="esencial-refresh" id="refresh-vuelo" aria-label="Cambiar opción de vuelo">
+        <img src="assets/icons/refresh-arrows.svg" alt="">
+      </button>
+
+      <div class="esencial-row" id="row-ida">
+        <div class="esencial-info">
+          <div class="esencial-label">
+            <img src="assets/icons/plane-group1.svg" class="esencial-icon esencial-icon-ida" alt="">
+            <span>VUELO DE IDA</span>
+          </div>
+          <p class="esencial-title" id="ida-fecha">—</p>
+          <p class="esencial-hora" id="ida-hora">—</p>
+          <p class="esencial-sub esencial-sub-small" id="ida-aerolinea">—</p>
+          <div class="esencial-detail-row">
+            <p class="esencial-detail" id="ida-ruta">—</p>
+            <img src="assets/icons/icons-briefcase.svg" class="esencial-extra-icon" alt="Equipaje de mano">
+          </div>
+        </div>
+        <button type="button" class="price-pill price-pill-fixed selected" id="ida-precio">
+          <svg class="price-pill-icon price-pill-icon-check" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L9.5 17L19 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="price-pill-icon price-pill-icon-plus" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          <span class="price-pill-amount">$0</span>
+        </button>
+      </div>
+
+      <hr class="esencial-sep">
+
+      <div class="esencial-row" id="row-vuelta">
+        <div class="esencial-info">
+          <div class="esencial-label">
+            <img src="assets/icons/plane-group1.svg" class="esencial-icon esencial-icon-vuelta" alt="">
+            <span>VUELO DE VUELTA</span>
+          </div>
+          <p class="esencial-title" id="vuelta-fecha">—</p>
+          <p class="esencial-hora" id="vuelta-hora">—</p>
+          <p class="esencial-sub esencial-sub-small" id="vuelta-aerolinea">—</p>
+          <div class="esencial-detail-row">
+            <p class="esencial-detail" id="vuelta-ruta">—</p>
+            <img src="assets/icons/icons-briefcase.svg" class="esencial-extra-icon" alt="Equipaje de mano">
+          </div>
+        </div>
+        <button type="button" class="price-pill price-pill-fixed selected" id="vuelta-precio">
+          <svg class="price-pill-icon price-pill-icon-check" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L9.5 17L19 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="price-pill-icon price-pill-icon-plus" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          <span class="price-pill-amount">$0</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="esencial-card">
+      <button type="button" class="esencial-refresh" id="refresh-hotel" aria-label="Cambiar alojamiento">
+        <img src="assets/icons/refresh-arrows.svg" alt="">
+      </button>
+
+      <div class="esencial-label">
+        <img src="assets/icons/house-key.svg" class="esencial-icon" alt="">
+        <span>ALOJAMIENTO</span>
+      </div>
+
+      <div class="esencial-photo">
+        <img id="hotel-photo-img" src="" alt="">
+      </div>
+
+      <div class="esencial-row" id="row-hotel">
+        <div class="esencial-info">
+          <p class="esencial-title" id="hotel-nombre">—</p>
+          <p class="esencial-sub" id="hotel-habitacion">—</p>
+          <p class="esencial-sub esencial-sub-small" id="hotel-capacidad">—</p>
+          <div class="esencial-detail-row">
+            <p class="esencial-detail" id="hotel-distancia">—</p>
+            <img src="assets/icons/local-cafe.svg" class="esencial-extra-icon" id="detalle-aloj-desayuno" alt="Desayuno incluido">
+          </div>
+        </div>
+        <button type="button" class="price-pill price-pill-fixed selected" id="hotel-precio">
+          <svg class="price-pill-icon price-pill-icon-check" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5L9.5 17L19 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="price-pill-icon price-pill-icon-plus" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          <span class="price-pill-amount">$0</span>
+        </button>
+      </div>
+    </div>
+
+    <h3 class="section-subtitle">Lo más compartido</h3>
+
+    <div class="shared-card">
+      <div class="shared-header">
+        <img src="assets/icons/trending-up.svg" class="shared-header-icon" alt="">
+        <span>ACTIVIDADES</span>
+      </div>
+      <div class="shared-scroll" id="actividades-scroll"></div>
+    </div>
+
+  </main>
+
+  <button type="button" class="cta-button cta-button-solid detalle-guardar" id="guardar-viaje-btn">
+    <span>Guardar Viaje</span>
+  </button>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="saved-overlay" id="saved-overlay" hidden>
+    <div class="saved-card" role="dialog" aria-modal="true" aria-labelledby="saved-title">
+      <div class="saved-check">
+        <svg viewBox="0 0 55 55" width="55" height="55" aria-hidden="true">
+          <circle cx="27.5" cy="27.5" r="27.5" fill="#002fa6"/>
+          <path id="saved-check-path" d="M15.5 28.5L23 36.5L39.5 18.5" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <p class="saved-title" id="saved-title">Tu viaje fue guardado</p>
+      <button type="button" class="saved-btn saved-btn-primary" id="saved-ver-viaje">Ver viaje</button>
+      <button type="button" class="saved-btn saved-btn-secondary" id="saved-volver-inicio">Volver al inicio</button>
+    </div>
+  </div>
+
+</template>
+
+<template id="tpl-viaje-recomendado">
+
+  <div class="reco-page">
+
+    <header class="reco-header">
+      <button type="button" class="back-btn" id="back-btn" aria-label="Volver">
+        <img src="assets/icons/back-arrow.svg" alt="">
+      </button>
+      <h1 class="reco-header-title">Viaje Recomendado</h1>
+    </header>
+
+    <main class="content reco-content">
+
+      <h2 class="reco-destination" id="reco-destination">—</h2>
+
+      <div class="reco-stats">
+        <div class="reco-stat">
+          <span class="reco-stat-label">COSTO TOTAL</span>
+          <span class="reco-stat-value" id="reco-costo">$0</span>
+        </div>
+        <div class="reco-stat">
+          <span class="reco-stat-label">DÍAS</span>
+          <span class="reco-stat-value" id="reco-dias">0</span>
+        </div>
+        <div class="reco-stat">
+          <span class="reco-stat-label">PREFERENCIAS</span>
+          <div class="reco-interest-icons" id="reco-intereses"></div>
+        </div>
+      </div>
+
+      <hr class="reco-divider reco-divider-tight">
+
+      <div class="carousel" id="carousel" aria-label="Fotos de la comunidad"></div>
+
+      <div class="reco-cards">
+        <div class="reco-card">
+          <div class="reco-card-header">
+            <img src="assets/icons/plane-group1.svg" class="reco-card-icon" alt="">
+            <span class="reco-card-label">VUELO</span>
+          </div>
+          <p class="reco-card-title" id="reco-vuelo-fecha">—</p>
+          <p class="reco-card-sub" id="reco-vuelo-aerolinea">—</p>
+          <div class="reco-card-detail">
+            <img src="assets/icons/icons-briefcase.svg" alt="">
+            <span>Equipaje de mano</span>
+          </div>
+        </div>
+        <div class="reco-card">
+          <div class="reco-card-header">
+            <img src="assets/icons/house-key.svg" class="reco-card-icon" alt="">
+            <span class="reco-card-label">ALOJAMIENTO</span>
+          </div>
+          <p class="reco-card-title" id="reco-aloj-nombre">—</p>
+          <p class="reco-card-sub" id="reco-aloj-habitacion">—</p>
+          <div class="reco-card-detail" id="reco-aloj-desayuno">
+            <img src="assets/icons/local-cafe.svg" alt="">
+            <span>Desayuno incluido</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reco-actions">
+        <button type="button" class="cta-button reco-btn-interesa" id="me-interesa-btn"><span>Me interesa</span></button>
+        <button type="button" class="cta-button reco-btn-otras" id="otras-opciones-btn"><span>Otras opciones</span></button>
+      </div>
+
+    </main>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+</template>
 
 <script src="js/common.js"></script>
 <script src="js/data.js"></script>
+<script src="js/router.js"></script>
 <script src="js/script.js"></script>
+<script src="js/mis-viajes.js"></script>
+<script src="js/otras-opciones.js"></script>
+<script src="js/recomendado.js"></script>
+<script src="js/detalle.js"></script>
 </body>
 </html>

@@ -392,7 +392,12 @@ button {
 
 .modal-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  max-width: 402px;
+  transform: translateX(-50%);
   background: rgba(20, 22, 30, 0);
   display: flex;
   align-items: center;
@@ -1134,7 +1139,12 @@ button {
 
 .loader-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  max-width: 402px;
+  transform: translateX(-50%);
   background: rgba(249, 248, 245, 0.97);
   display: flex;
   align-items: center;
@@ -1705,7 +1715,12 @@ button {
 
 .saved-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  max-width: 402px;
+  transform: translateX(-50%);
   background: rgba(0, 47, 166, 0);
   display: flex;
   align-items: flex-end;
@@ -2038,7 +2053,12 @@ button {
 
 .mv-confirm-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  max-width: 402px;
+  transform: translateX(-50%);
   background: rgba(20, 22, 30, 0);
   display: flex;
   align-items: center;

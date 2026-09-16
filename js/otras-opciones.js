@@ -1,7 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.PageInit.otrasOpciones = function () {
   const raw = sessionStorage.getItem('viajeBusqueda');
   if (!raw) {
-    window.location.href = 'index.html';
+    setTimeout(() => window.routerMount('index.html'), 0);
     return;
   }
 
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     data = JSON.parse(raw);
   } catch (e) {
-    window.location.href = 'index.html';
+    setTimeout(() => window.routerMount('index.html'), 0);
     return;
   }
 
@@ -77,4 +77,4 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('back-btn').addEventListener('click', () => {
     navigateWithFade('viaje-recomendado.html');
   });
-});
+};

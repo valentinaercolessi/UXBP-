@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.PageInit.misViajes = function () {
 
   // ---------- Segmentos: Activos / Pasados / Guardados ----------
 
@@ -135,4 +135,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   renderGuardados();
-});
+};

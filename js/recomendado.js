@@ -1,7 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.PageInit.recomendado = function () {
   const raw = sessionStorage.getItem('viajeBusqueda');
   if (!raw) {
-    window.location.href = 'index.html';
+    setTimeout(() => window.routerMount('index.html'), 0);
     return;
   }
 
@@ -9,13 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     data = JSON.parse(raw);
   } catch (e) {
-    window.location.href = 'index.html';
+    setTimeout(() => window.routerMount('index.html'), 0);
     return;
   }
 
   const trip = TRIPS.find((t) => t.id === data.tripId);
   if (!trip) {
-    window.location.href = 'index.html';
+    setTimeout(() => window.routerMount('index.html'), 0);
     return;
   }
 
@@ -235,4 +235,4 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('otras-opciones-btn').addEventListener('click', () => {
     navigateWithFade('otras-opciones.html');
   });
-});
+};
